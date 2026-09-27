@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Замените адрес на свой после публикации сайта
+# Sitemap: https://example.com/sitemap.xml

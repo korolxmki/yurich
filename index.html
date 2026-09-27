@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Юрич Мебель — кухни на заказ по вашим размерам</title>
+<meta name="description" content="Проектируем и производим кухни на заказ: бесплатный замер и проект, собственное производство, гарантия 3 года. Портфолио работ, расчёт стоимости онлайн.">
+<meta property="og:title" content="Юрич Мебель — создаём пространство жизни">
+<meta property="og:description" content="Кухни на заказ по вашим размерам. Замер и проект бесплатно, гарантия 3 года.">
+<meta property="og:image" content="assets/img/works/kuhnya-belaya-chernyy.jpg">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/fonts.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- ШАПКА -->
+<header class="header" id="top">
+  <div class="wrap header__inner">
+    <a class="logo" href="./" aria-label="Юрич Мебель — на главную">
+      <svg class="logo__mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path d="M27 5c0 11-6.8 17.5-15.6 17.5H7C7 11.5 13.8 5 22.6 5H27Z" fill="currentColor"/>
+        <path d="M5 28c2.5-7.8 7.3-13.2 14-16.4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span class="logo__text">Юрич Мебель</span>
+    </a>
+
+    <nav class="nav" id="nav">
+      <a href="#top" class="is-active">Главная</a>
+      <a href="#portfolio">Работы</a>
+      <a href="#blog">Блог</a>
+      <a href="#calc">Заказать расчёт</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+
+    <div class="header__side">
+      <!-- ЗАМЕНИТЕ телефон на реальный (см. README) -->
+      <a class="header__phone" href="tel:+79991234567" data-site="tel">+7 999 123-45-67</a>
+      <button class="cart-chip" id="favBtn" aria-label="Открыть подборку">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+          <path d="M3 6h18l-2 12H5L3 6Z" stroke-linejoin="round"/><path d="M8 6a4 4 0 0 1 8 0"/>
+        </svg>
+        <span id="favLabel">Корзина пуста</span>
+        <i class="cart-chip__count" id="favCount">0</i>
+      </button>
+      <button class="burger" id="burger" aria-label="Меню" aria-expanded="false" aria-controls="nav">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ПЕРВЫЙ ЭКРАН -->
+<section class="hero">
+  <div class="wrap hero__inner">
+    <div class="hero__text">
+      <h1 class="display hero__title"><span>Создаем</span><span>пространство</span><span>жизни</span></h1>
+      <p class="hero__sub">Кухни на заказ по вашим размерам. Проектируем, производим и собираем сами — без посредников и сюрпризов в смете.</p>
+      <div class="hero__cta">
+        <a class="btn" href="#calc">Рассчитать стоимость
+          <svg class="btn__arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a class="btn btn--ghost" href="#portfolio">Смотреть работы</a>
+      </div>
+      <div class="hero__facts">
+        <div class="fact"><div class="fact__num">8 лет</div><div class="fact__label">на рынке мебели</div></div>
+        <div class="fact"><div class="fact__num">400+</div><div class="fact__label">собранных кухонь</div></div>
+        <div class="fact"><div class="fact__num">3 года</div><div class="fact__label">гарантии на изделие</div></div>
+      </div>
+    </div>
+
+    <div class="hero__media">
+      <div class="hero__blob" aria-hidden="true"></div>
+      <img class="hero__photo" src="assets/img/yurich-cutout.png" alt="Юрий — основатель мастерской «Юрич Мебель»" width="807" height="1100" fetchpriority="high">
+      <div class="hero__badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m5 12 5 5L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div><b>Замер и проект — 0 ₽</b><small>выезд в день обращения</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- БЕГУЩАЯ СТРОКА -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee__track"><span>Кухни на заказ</span><span>Собственное производство</span><span>Замер бесплатно</span><span>Гарантия 3 года</span><span>Рассрочка 0%</span><span>Сборка за 1 день</span></div>
+  <div class="marquee__track"><span>Кухни на заказ</span><span>Собственное производство</span><span>Замер бесплатно</span><span>Гарантия 3 года</span><span>Рассрочка 0%</span><span>Сборка за 1 день</span></div>
+</div>
+
+<!-- ПРЕИМУЩЕСТВА -->
+<section class="section" id="about-short">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-head__text">
+        <p class="eyebrow">Почему к нам возвращаются</p>
+        <h2 class="display">Кухня без сюрпризов</h2>
+        <p class="lead">Мы сами замеряем, сами проектируем и сами собираем. Поэтому отвечаем за результат целиком, а не за «свою часть работы».</p>
+      </div>
+      <a class="link-arrow" href="#calc">Получить расчёт
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+
+    <div class="grid-4">
+      <article class="card reveal">
+        <div class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6" stroke-linejoin="round"/></svg></div>
+        <h3>Своё производство</h3>
+        <p>Полный цикл на собственном оборудовании. Без цепочки подрядчиков, которые перекладывают ответственность друг на друга.</p>
+      </article>
+      <article class="card reveal">
+        <div class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.4 8.3 8 9 4.6-.7 8-4 8-9V6l-8-3Z" stroke-linejoin="round"/><path d="m9 12 2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>Гарантия 3 года</h3>
+        <p>На корпус, фасады и фурнитуру. Сервис по гарантии — наш, приезжаем сами, а не отправляем к производителю фурнитуры.</p>
+      </article>
+      <article class="card reveal">
+        <div class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 7h18v13H3zM3 7l3-4h12l3 4M8 12h8" stroke-linejoin="round"/></svg></div>
+        <h3>Фиксированная смета</h3>
+        <p>Цена в договоре не меняется после замера. Все доработки по ходу проекта считаем до подписания, а не по факту.</p>
+      </article>
+      <article class="card reveal">
+        <div class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>30 дней от макета</h3>
+        <p>Средний срок от утверждённого проекта до собранной кухни. Сборка занимает один день — вечером кухня рабочая.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ПОРТФОЛИО -->
+<section class="section section--tint" id="portfolio">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-head__text">
+        <p class="eyebrow">Портфолио</p>
+        <h2 class="display">Наши работы</h2>
+        <p class="lead">Реальные кухни из реальных квартир — без рендеров и стоковых фотографий. Нажмите на понравившуюся, чтобы рассмотреть, или добавьте её в подборку для обсуждения.</p>
+      </div>
+      <div class="filters" id="filters" role="group" aria-label="Фильтр работ">
+        <button class="filter is-active" data-filter="all">Все</button>
+        <button class="filter" data-filter="svetlye">Светлые</button>
+        <button class="filter" data-filter="tsvetnye">Цветные</button>
+        <button class="filter" data-filter="grafit">Графит</button>
+        <button class="filter" data-filter="detali">Детали</button>
+      </div>
+    </div>
+    <div class="gallery" id="gallery"></div>
+  </div>
+</section>
+
+<!-- ЭТАПЫ -->
+<section class="section" id="steps">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-head__text">
+        <p class="eyebrow">Как мы работаем</p>
+        <h2 class="display">Пять шагов до кухни</h2>
+      </div>
+    </div>
+    <div class="steps">
+      <article class="step reveal"><h3>Замер</h3><p>Приезжаем с образцами материалов, снимаем размеры и сразу отдаём схему розеток и коммуникаций.</p></article>
+      <article class="step reveal"><h3>Проект</h3><p>Показываем 2–3 варианта планировки под вашу комнату и объясняем, что вы выигрываете и теряете в каждом.</p></article>
+      <article class="step reveal"><h3>Договор</h3><p>Фиксируем цену, сроки и комплектацию. После подписания смета не меняется.</p></article>
+      <article class="step reveal"><h3>Производство</h3><p>Изготавливаем на своём оборудовании. Держим в курсе по каждому этапу, без «позвоните через месяц».</p></article>
+      <article class="step reveal"><h3>Сборка</h3><p>Монтаж за один день, вывозим весь мусор и упаковку. Подключаем технику и проверяем каждый механизм.</p></article>
+    </div>
+  </div>
+</section>
+
+<!-- ВИДЕО -->
+<section class="section section--mint" id="video">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-head__text">
+        <p class="eyebrow">Видео</p>
+        <h2 class="display">Как это делается</h2>
+        <p class="lead">Показываем производство, монтаж и разбираем кухни изнутри — что происходит за фасадом.</p>
+      </div>
+      <a class="link-arrow" href="blog.html#video">Все видео
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+    <div class="videos" id="videos"></div>
+  </div>
+</section>
+
+<!-- БЛОГ -->
+<section class="section" id="blog">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-head__text">
+        <p class="eyebrow">Блог</p>
+        <h2 class="display">Разбираемся в мебели</h2>
+        <p class="lead">Практические статьи о материалах, планировках и ошибках, которые дорого обходятся. Без воды и рекламы производителей.</p>
+      </div>
+      <a class="link-arrow" href="blog.html">Все статьи
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+    <div class="posts" id="posts"></div>
+  </div>
+</section>
+
+<!-- РАСЧЁТ -->
+<section class="section section--tint" id="calc">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-head__text">
+        <p class="eyebrow">Заказать расчёт</p>
+        <h2 class="display">Предварительная стоимость</h2>
+        <p class="lead">Ориентир по вашим параметрам — за минуту, без звонка. Точную смету считаем после замера.</p>
+      </div>
+    </div>
+
+    <div class="form-panel reveal">
+      <form class="form" id="calcForm" novalidate>
+        <div class="field">
+          <label for="layout">Планировка</label>
+          <select id="layout" name="layout">
+            <option value="1">Линейная (в одну стену)</option>
+            <option value="1.18" selected>Угловая</option>
+            <option value="1.32">П-образная</option>
+            <option value="1.45">С островом</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="length">Длина по фронту, м — <output id="lengthOut">3,5</output></label>
+          <input type="range" id="length" name="length" min="1.5" max="8" step="0.1" value="3.5">
+        </div>
+        <div class="field">
+          <label for="facade">Материал фасадов</label>
+          <select id="facade" name="facade">
+            <option value="19000">Плёночный МДФ</option>
+            <option value="27000" selected>МДФ в эмали</option>
+            <option value="23000">Пластик HPL</option>
+            <option value="38000">Шпон</option>
+            <option value="46000">Массив дерева</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="counter">Столешница</label>
+          <select id="counter" name="counter">
+            <option value="4000">ЛДСП 38 мм</option>
+            <option value="11000" selected>Акриловый камень</option>
+            <option value="16000">Кварцевый агломерат</option>
+            <option value="13000">Массив дерева</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="extras">Дополнительно</label>
+          <select id="extras" name="extras" multiple size="3" aria-describedby="extrasHint">
+            <option value="18000">Подсветка рабочей зоны</option>
+            <option value="24000">Выкатная система в угол</option>
+            <option value="32000">Фасады до потолка</option>
+          </select>
+          <p class="form__note" id="extrasHint">Можно выбрать несколько — удерживайте Ctrl (⌘ на Mac).</p>
+        </div>
+      </form>
+
+      <div>
+        <div class="estimate">
+          <div class="estimate__row"><span>Корпус и фасады</span><b id="sumBase">—</b></div>
+          <div class="estimate__row"><span>Столешница</span><b id="sumCounter">—</b></div>
+          <div class="estimate__row"><span>Опции</span><b id="sumExtras">—</b></div>
+          <div class="estimate__total"><span>Ориентировочно</span><b id="sumTotal">—</b></div>
+          <p class="form__note" style="margin-top:14px">Расчёт предварительный и не является офертой. Точная стоимость — после замера.</p>
+        </div>
+
+        <form class="form" id="leadForm" style="margin-top:26px" novalidate>
+          <div class="field-row">
+            <div class="field"><label for="leadName">Имя</label><input id="leadName" name="name" type="text" autocomplete="name" placeholder="Как к вам обращаться" required></div>
+            <div class="field"><label for="leadPhone">Телефон</label><input id="leadPhone" name="phone" type="tel" autocomplete="tel" placeholder="+7 ___ ___-__-__" required></div>
+          </div>
+          <input type="hidden" name="estimate" id="leadEstimate">
+          <input type="hidden" name="favourites" id="leadFavourites">
+          <button class="btn btn--wide" type="submit">Отправить заявку
+            <svg class="btn__arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <p class="form__status" id="leadStatus" role="status"></p>
+          <p class="form__note">Нажимая кнопку, вы соглашаетесь с <a href="#contacts">обработкой персональных данных</a>.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- О НАС -->
+<section class="section" id="about">
+  <div class="wrap about">
+    <div class="about__media reveal">
+      <img src="assets/img/yurich-about.jpg" alt="Юрий, основатель мастерской «Юрич Мебель»" width="960" height="1280" loading="lazy">
+    </div>
+    <div class="reveal">
+      <p class="eyebrow">О мастерской</p>
+      <h2 class="display">Работаем руками, отвечаем лично</h2>
+      <p class="lead">«Юрич Мебель» — небольшая мастерская, а не мебельная фабрика с колл-центром. Я сам приезжаю на замер, сам согласовываю проект и сам отвечаю, если что-то пошло не так.</p>
+      <blockquote class="about__quote">Кухня — это не набор шкафов. Это то, как вы двигаетесь по комнате каждое утро. Если это продумано, вы никогда об этом не задумаетесь.</blockquote>
+      <div class="about__stats">
+        <div class="fact"><div class="fact__num">400+</div><div class="fact__label">кухонь собрано</div></div>
+        <div class="fact"><div class="fact__num">30 дней</div><div class="fact__label">средний срок</div></div>
+        <div class="fact"><div class="fact__num">0 ₽</div><div class="fact__label">замер и проект</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section section--tint">
+  <div class="wrap">
+    <div class="section-head reveal" style="justify-content:center;text-align:center">
+      <div class="section-head__text">
+        <p class="eyebrow" style="justify-content:center">Вопросы</p>
+        <h2 class="display">Частые вопросы</h2>
+      </div>
+    </div>
+    <div class="faq reveal">
+      <details open><summary>Сколько стоит замер и проект?</summary><p>Бесплатно и ни к чему не обязывает. Мы приезжаем с образцами, снимаем размеры и отдаём схему коммуникаций — даже если вы в итоге закажете кухню не у нас.</p></details>
+      <details><summary>Можно заказать кухню до ремонта?</summary><p>Не только можно — так правильно. По проекту кухни мы отдаём точные высоты розеток и вывода воды, и электрик с плиточником работают уже по ним. Это снимает большую часть будущих проблем.</p></details>
+      <details><summary>Как формируется цена?</summary><p>Из длины по фронту, материала фасадов, столешницы и фурнитуры. После замера смета фиксируется в договоре и дальше не меняется.</p></details>
+      <details><summary>Работаете со своими материалами заказчика?</summary><p>Да, если материал подходит по технологии. Например, столешницу или технику можно купить самостоятельно — мы заложим её в проект и установим.</p></details>
+      <details><summary>Что входит в гарантию 3 года?</summary><p>Корпус, фасады, фурнитура и качество монтажа. Гарантийные выезды делаем сами, без переадресации к производителям комплектующих.</p></details>
+      <details><summary>Есть рассрочка?</summary><p>Да, до 12 месяцев без переплаты. Обсуждаем условия при подписании договора.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- КОНТАКТЫ -->
+<section class="section" id="contacts">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-head__text">
+        <p class="eyebrow">Контакты</p>
+        <h2 class="display">Приезжайте или пишите</h2>
+        <p class="lead">Ответим в мессенджере в течение рабочего дня. На замер выезжаем в день обращения, если успеваем по графику.</p>
+      </div>
+    </div>
+    <!-- ЗАМЕНИТЕ контакты на реальные (см. README) -->
+    <div class="contacts reveal">
+      <div class="contact">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1Z" stroke-linejoin="round"/></svg>
+        <div><b>Телефон</b><a href="tel:+79991234567" data-site="tel">+7 999 123-45-67</a></div>
+      </div>
+      <div class="contact">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6" stroke-linejoin="round"/></svg>
+        <div><b>Почта</b><a href="mailto:info@example.com" data-site="mail">info@example.com</a></div>
+      </div>
+      <div class="contact">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.5"/></svg>
+        <div><b>Шоурум</b><span data-site="address">г. Город, ул. Примерная, 1</span></div>
+      </div>
+      <div class="contact">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div><b>Режим работы</b><span data-site="hours">Пн–Сб, 9:00–20:00</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ПОДВАЛ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__top">
+      <div>
+        <a class="logo" href="./">
+          <svg class="logo__mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <path d="M27 5c0 11-6.8 17.5-15.6 17.5H7C7 11.5 13.8 5 22.6 5H27Z" fill="currentColor"/>
+            <path d="M5 28c2.5-7.8 7.3-13.2 14-16.4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span class="logo__text">Юрич Мебель</span>
+        </a>
+        <p style="color:rgba(255,255,255,.62);font-size:15px;margin:16px 0 0;max-width:30ch">Кухни на заказ по вашим размерам. Своё производство, гарантия 3 года.</p>
+        <div class="socials">
+          <a href="#" data-site="telegram" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.9 4.3 18.8 19c-.2 1-.9 1.3-1.7.8l-4.7-3.5-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.8 8.8-8c.4-.3-.1-.5-.6-.2L6.8 13.1 2.1 11.6c-1-.3-1-1 .2-1.5l18.2-7c.9-.3 1.6.2 1.4 1.2Z"/></svg></a>
+          <a href="#" data-site="whatsapp" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2Zm5.5 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-1.7-.1-.4-.1-.9-.3-1.6-.6-2.7-1.2-4.5-4-4.6-4.2-.1-.2-1.1-1.4-1.1-2.7s.7-1.9.9-2.2c.2-.2.5-.3.6-.3h.5c.2 0 .4 0 .6.4l.8 2c.1.2.1.3 0 .5l-.3.5-.3.3c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.1 1 2 1.3 2.3 1.4.3.1.4.1.6-.1l.8-1c.2-.2.4-.2.6-.1l2 1c.2.1.4.2.4.3.1.2.1.6-.1 1.1Z"/></svg></a>
+          <a href="#" data-site="vk" aria-label="ВКонтакте"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.8 17c-5 0-8.2-3.5-8.3-9.4h2.6c.1 4.3 2 6.1 3.5 6.5V7.6h2.4v3.7c1.4-.2 2.9-1.8 3.4-3.7h2.4c-.4 2.3-2 4-3.1 4.6 1.1.5 3 2 3.7 4.8h-2.7c-.6-1.8-1.9-3.2-3.7-3.4V17h-.2Z"/></svg></a>
+        </div>
+      </div>
+      <div><h4>Разделы</h4><ul>
+        <li><a href="#portfolio">Работы</a></li><li><a href="#steps">Как мы работаем</a></li>
+        <li><a href="#calc">Заказать расчёт</a></li><li><a href="#about">О мастерской</a></li>
+      </ul></div>
+      <div><h4>Блог</h4><ul id="footerPosts"></ul></div>
+      <div><h4>Контакты</h4><ul>
+        <li><a href="tel:+79991234567" data-site="tel">+7 999 123-45-67</a></li>
+        <li><a href="mailto:info@example.com" data-site="mail">info@example.com</a></li>
+        <li data-site="address">г. Город, ул. Примерная, 1</li><li data-site="hours">Пн–Сб, 9:00–20:00</li>
+      </ul></div>
+    </div>
+    <div class="footer__bottom">
+      <span>© <span id="year">2026</span> Юрич Мебель. Создаём пространство жизни.</span>
+      <span>Не является публичной офертой</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ЛАЙТБОКС -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Просмотр фотографии">
+  <button class="lightbox__btn lightbox__close" id="lbClose" aria-label="Закрыть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 6 12 12M18 6 6 18" stroke-linecap="round"/></svg></button>
+  <button class="lightbox__btn lightbox__prev" id="lbPrev" aria-label="Предыдущая"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m14 5-7 7 7 7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <button class="lightbox__btn lightbox__next" id="lbNext" aria-label="Следующая"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m10 5 7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <div><img id="lbImg" src="" alt=""><p class="lightbox__cap" id="lbCap"></p></div>
+</div>
+
+<!-- ПОДБОРКА -->
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer" aria-label="Подборка работ">
+  <div class="drawer__head">
+    <h3>Ваша подборка</h3>
+    <button class="drawer__close" id="drawerClose" aria-label="Закрыть"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 6 12 12M18 6 6 18" stroke-linecap="round"/></svg></button>
+  </div>
+  <div class="drawer__body" id="drawerBody"></div>
+  <div class="drawer__foot">
+    <a class="btn btn--wide" href="#calc" id="drawerCta">Обсудить подборку</a>
+  </div>
+</aside>
+
+<script src="content/config.js"></script>
+<script src="content/works.js"></script>
+<script src="content/posts.js"></script>
+<script src="content/videos.js"></script>
+<script src="assets/js/main.js" defer></script>
+</body>
+</html>
