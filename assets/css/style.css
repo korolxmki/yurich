@@ -84,7 +84,7 @@ p { margin: 0; }
 }
 .header.is-stuck { border-bottom-color: var(--line); box-shadow: 0 6px 24px rgba(27, 25, 23, .05); }
 .header__inner { display: flex; align-items: center; gap: 18px; height: 72px; }
-.logo { display: flex; align-items: center; gap: 12px; text-decoration: none; font-weight: 700; letter-spacing: -.02em; }
+.logo { display: flex; align-items: center; gap: 12px; min-width: 0; text-decoration: none; font-weight: 700; letter-spacing: -.02em; }
 .logo__mark {
   width: 38px; height: 38px; border-radius: 11px; background: var(--ink); color: #fff;
   display: grid; place-items: center; font-size: 1.05rem; flex: none;
@@ -95,16 +95,21 @@ p { margin: 0; }
 .nav a { text-decoration: none; color: var(--ink-2); font-size: .97rem; font-weight: 500; }
 .nav a:hover { color: var(--accent-ink); }
 .header__phone { font-weight: 700; text-decoration: none; white-space: nowrap; }
-.header__actions { display: flex; align-items: center; gap: 16px; margin-left: auto; }
+.header__actions { display: flex; align-items: center; gap: 16px; margin-left: auto; flex: none; }
 .nav + .header__actions { margin-left: 0; }
 @media (max-width: 900px) { .nav { display: none; } }
 @media (max-width: 560px) {
   .logo__text small { display: none; }
   .header__cta { display: none; }
   .header__phone {
-    display: inline-flex; align-items: center; gap: 7px; padding: 9px 15px;
-    border-radius: 999px; background: var(--accent); color: #fff; font-size: .92rem;
+    display: inline-flex; align-items: center; gap: 7px; padding: 9px 14px;
+    border-radius: 999px; background: var(--accent); color: #fff; font-size: .88rem;
   }
+}
+@media (max-width: 400px) {
+  .header__inner { gap: 10px; }
+  .logo__text { font-size: .85rem; }
+  .header__phone { padding: 8px 12px; font-size: .82rem; gap: 5px; }
 }
 @media (min-width: 561px) { .header__phone svg { display: none; } }
 
@@ -119,7 +124,7 @@ p { margin: 0; }
 @media (max-width: 760px) {
   .hero::after { background: linear-gradient(to bottom, rgba(20, 17, 14, .92) 0%, rgba(20, 17, 14, .8) 55%, rgba(20, 17, 14, .86) 100%); }
   .hero__note { color: rgba(255, 255, 255, .75); }
-  .logo__text { font-size: .95rem; white-space: nowrap; }
+  .logo__text { font-size: .93rem; }
   .logo__mark { width: 34px; height: 34px; border-radius: 10px; }
 }
 .hero__inner { padding: clamp(72px, 11vw, 132px) 0 clamp(52px, 7vw, 92px); max-width: 720px; }
