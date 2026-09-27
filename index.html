@@ -135,14 +135,12 @@
       <div class="section-head__text">
         <p class="eyebrow">Портфолио</p>
         <h2 class="display">Наши работы</h2>
-        <p class="lead">Реальные кухни из реальных квартир — без рендеров и стоковых фотографий. Нажмите на понравившуюся, чтобы рассмотреть, или добавьте её в подборку для обсуждения.</p>
+        <p class="lead">Реальные кухни из реальных квартир — без рендеров и стоковых фотографий, по одному кадру на проект. Нажмите на понравившуюся, чтобы рассмотреть, или добавьте её в подборку для обсуждения.</p>
       </div>
       <div class="filters" id="filters" role="group" aria-label="Фильтр работ">
-        <button class="filter is-active" data-filter="all">Все</button>
-        <button class="filter" data-filter="svetlye">Светлые</button>
+        <button class="filter is-active" data-filter="svetlye">Светлые</button>
         <button class="filter" data-filter="tsvetnye">Цветные</button>
         <button class="filter" data-filter="grafit">Графит</button>
-        <button class="filter" data-filter="detali">Детали</button>
       </div>
     </div>
     <div class="gallery" id="gallery"></div>
@@ -209,78 +207,62 @@
       <div class="section-head__text">
         <p class="eyebrow">Заказать расчёт</p>
         <h2 class="display">Предварительная стоимость</h2>
-        <p class="lead">Ориентир по вашим параметрам — за минуту, без звонка. Точную смету считаем после замера.</p>
+        <p class="lead">Три вопроса — и вы видите порядок цены. Без звонка и ожидания.</p>
       </div>
     </div>
 
-    <div class="form-panel reveal">
-      <form class="form" id="calcForm" novalidate>
+    <div class="calc reveal">
+      <form class="calc__controls" id="calcForm">
         <div class="field">
           <label for="layout">Планировка</label>
           <select id="layout" name="layout">
-            <option value="1">Линейная (в одну стену)</option>
+            <option value="1">В одну стену</option>
             <option value="1.18" selected>Угловая</option>
             <option value="1.32">П-образная</option>
             <option value="1.45">С островом</option>
           </select>
         </div>
         <div class="field">
-          <label for="length">Длина по фронту, м — <output id="lengthOut">3,5</output></label>
+          <label for="length">Длина по фронту — <output id="lengthOut">3,5</output> м</label>
           <input type="range" id="length" name="length" min="1.5" max="8" step="0.1" value="3.5">
         </div>
         <div class="field">
-          <label for="facade">Материал фасадов</label>
+          <label for="facade">Фасады</label>
           <select id="facade" name="facade">
-            <option value="19000">Плёночный МДФ</option>
-            <option value="27000" selected>МДФ в эмали</option>
-            <option value="23000">Пластик HPL</option>
-            <option value="38000">Шпон</option>
-            <option value="46000">Массив дерева</option>
+            <option value="23000">Плёночный МДФ</option>
+            <option value="38000" selected>МДФ в эмали</option>
+            <option value="30000">Пластик HPL</option>
+            <option value="50000">Шпон</option>
+            <option value="60000">Массив дерева</option>
           </select>
-        </div>
-        <div class="field">
-          <label for="counter">Столешница</label>
-          <select id="counter" name="counter">
-            <option value="4000">ЛДСП 38 мм</option>
-            <option value="11000" selected>Акриловый камень</option>
-            <option value="16000">Кварцевый агломерат</option>
-            <option value="13000">Массив дерева</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="extras">Дополнительно</label>
-          <select id="extras" name="extras" multiple size="3" aria-describedby="extrasHint">
-            <option value="18000">Подсветка рабочей зоны</option>
-            <option value="24000">Выкатная система в угол</option>
-            <option value="32000">Фасады до потолка</option>
-          </select>
-          <p class="form__note" id="extrasHint">Можно выбрать несколько — удерживайте Ctrl (⌘ на Mac).</p>
         </div>
       </form>
 
-      <div>
-        <div class="estimate">
-          <div class="estimate__row"><span>Корпус и фасады</span><b id="sumBase">—</b></div>
-          <div class="estimate__row"><span>Столешница</span><b id="sumCounter">—</b></div>
-          <div class="estimate__row"><span>Опции</span><b id="sumExtras">—</b></div>
-          <div class="estimate__total"><span>Ориентировочно</span><b id="sumTotal">—</b></div>
-          <p class="form__note" style="margin-top:14px">Расчёт предварительный и не является офертой. Точная стоимость — после замера.</p>
-        </div>
-
-        <form class="form" id="leadForm" style="margin-top:26px" novalidate>
-          <div class="field-row">
-            <div class="field"><label for="leadName">Имя</label><input id="leadName" name="name" type="text" autocomplete="name" placeholder="Как к вам обращаться" required></div>
-            <div class="field"><label for="leadPhone">Телефон</label><input id="leadPhone" name="phone" type="tel" autocomplete="tel" placeholder="+7 ___ ___-__-__" required></div>
-          </div>
-          <input type="hidden" name="estimate" id="leadEstimate">
-          <input type="hidden" name="favourites" id="leadFavourites">
-          <button class="btn btn--wide" type="submit">Отправить заявку
-            <svg class="btn__arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <p class="form__status" id="leadStatus" role="status"></p>
-          <p class="form__note">Нажимая кнопку, вы соглашаетесь с <a href="#contacts">обработкой персональных данных</a>.</p>
-        </form>
+      <div class="calc__result">
+        <span>Примерно под ключ</span>
+        <b id="sumTotal">—</b>
+        <p>вместе со столешницей, фурнитурой и сборкой</p>
       </div>
+
+      <form class="calc__lead" id="leadForm" novalidate>
+        <div class="field">
+          <label for="leadName">Имя</label>
+          <input id="leadName" name="name" type="text" autocomplete="name" placeholder="Как к вам обращаться" required>
+        </div>
+        <div class="field">
+          <label for="leadPhone">Телефон</label>
+          <input id="leadPhone" name="phone" type="tel" autocomplete="tel" placeholder="+7 ___ ___-__-__" required>
+        </div>
+        <input type="hidden" name="estimate" id="leadEstimate">
+        <input type="hidden" name="favourites" id="leadFavourites">
+        <button class="btn" type="submit">Отправить заявку
+          <svg class="btn__arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </form>
+
+      <p class="form__status" id="leadStatus" role="status"></p>
+      <p class="calc__note">Расчёт предварительный и не является офертой — точную смету считаем после замера.
+        Отправляя заявку, вы соглашаетесь с обработкой персональных данных.</p>
     </div>
   </div>
 </section>

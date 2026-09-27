@@ -35,6 +35,22 @@ if (burger && nav) {
   });
 }
 
+/* ——— плавный переход по якорям ———
+   CSS scroll-behavior работает не везде (например, когда страница отрисована
+   внутри фрейма), поэтому ведём прокрутку сами — и с тем же поведением. */
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[href^="#"]');
+  if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey) return;
+  const id = a.getAttribute('href').slice(1);
+  if (!id) return;
+  const target = document.getElementById(id);
+  if (!target) return;
+  e.preventDefault();
+  target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+  history.replaceState(null, '', '#' + id);
+});
+
 /* подсветка активного пункта меню */
 const sections = $$('main section[id]');
 const navLinks = new Map($$('#nav a[href^="#"]').map(a => [a.getAttribute('href').slice(1), a]));
@@ -124,9 +140,9 @@ drawerBody?.addEventListener('click', e => {
 const gallery = $('#gallery');
 let shown = works;
 
-function renderGallery(filter = 'all') {
+function renderGallery(filter) {
   if (!gallery) return;
-  shown = filter === 'all' ? works : works.filter(w => w.category === filter);
+  shown = works.filter(w => w.category === filter);
   gallery.innerHTML = shown.map((w, i) => `
     <figure class="work" data-index="${i}" style="animation-delay:${Math.min(i, 11) * 35}ms">
       <img src="assets/img/works/thumb/${w.slug}.jpg" alt="${esc(w.caption)}" loading="lazy" decoding="async">
@@ -252,23 +268,16 @@ if (footerPosts) footerPosts.innerHTML = sorted.slice(0, 4)
 const calcForm = $('#calcForm');
 function calculate() {
   if (!calcForm) return;
-  const length  = parseFloat($('#length').value);
-  const layout  = parseFloat($('#layout').value);
-  const facade  = parseFloat($('#facade').value);
-  const counter = parseFloat($('#counter').value);
-  const extras  = [...$('#extras').selectedOptions].reduce((s, o) => s + parseFloat(o.value), 0);
+  const length = parseFloat($('#length').value);
+  const layout = parseFloat($('#layout').value);   // надбавка за форму гарнитура
+  const facade = parseFloat($('#facade').value);   // цена метра под ключ
+  const total  = length * layout * facade;
 
-  const base = length * layout * facade;
-  const top  = length * layout * counter;
-  const total = base + top + extras;
-
-  $('#lengthOut').textContent  = length.toFixed(1).replace('.', ',');
-  $('#sumBase').textContent    = money(base);
-  $('#sumCounter').textContent = money(top);
-  $('#sumExtras').textContent  = extras ? money(extras) : '—';
-  $('#sumTotal').textContent   = money(total);
+  $('#lengthOut').textContent = length.toFixed(1).replace('.', ',');
+  $('#sumTotal').textContent  = money(total);
   const hidden = $('#leadEstimate');
-  if (hidden) hidden.value = `${money(total)} · ${length.toFixed(1)} м · ${$('#facade').selectedOptions[0].text}`;
+  if (hidden) hidden.value = `${money(total)} · ${length.toFixed(1)} м · ` +
+    `${$('#layout').selectedOptions[0].text.toLowerCase()} · ${$('#facade').selectedOptions[0].text}`;
 }
 calcForm?.addEventListener('input', calculate);
 calculate();
@@ -356,7 +365,8 @@ function say(el, msg, isError) { el.style.color = isError ? '#C0392B' : ''; el.t
 const year = $('#year');
 if (year) year.textContent = String(new Date().getFullYear());
 
-renderGallery();
+// стартовая вкладка берётся из разметки — порядок фильтров меняется в HTML
+renderGallery($('.filter.is-active')?.dataset.filter || works[0]?.category);
 renderVideos($('#videos'), 3);
 renderVideos($('#allVideos'));
 syncFav();

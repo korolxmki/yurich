@@ -8,7 +8,7 @@
   --serif:'Playfair Display',Georgia,serif;
   --sans:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   --wrap:1240px; --pad:clamp(16px,4vw,40px);
-  --r:18px; --r-lg:28px;
+  --r:18px; --r-lg:28px; --control-h:56px;
   --shadow:0 18px 50px -24px rgba(20,24,26,.28);
   --shadow-lg:0 40px 90px -40px rgba(20,24,26,.4);
   --ease:cubic-bezier(.22,.61,.36,1);
@@ -16,6 +16,8 @@
 
 *,*::before,*::after{box-sizing:border-box}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{scroll-behavior:smooth}
+section[id]{scroll-margin-top:96px}   /* якоря не уезжают под липкую шапку */
 body{
   margin:0;font-family:var(--sans);color:var(--ink);background:var(--white);
   font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased;overflow-x:hidden;
@@ -307,33 +309,41 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
 .post-card p{margin:0;font-size:15px;color:var(--muted);flex:1}
 
 /* ——— форма ——— */
-.form-panel{
-  display:grid;gap:clamp(28px,4vw,56px);grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));
-  align-items:start;background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);
-  padding:clamp(26px,4vw,52px);box-shadow:var(--shadow);
-}
 .form{display:grid;gap:15px}
 .field{display:grid;gap:7px}
 .field label{font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-2)}
 .field input,.field select,.field textarea{
-  width:100%;padding:14px 17px;border:1.5px solid var(--line);border-radius:13px;background:#fff;
-  font-size:16px;transition:border-color .2s,box-shadow .2s;
+  width:100%;min-height:var(--control-h);padding:14px 17px;border:1.5px solid var(--line);
+  border-radius:13px;background:#fff;font-size:16px;transition:border-color .2s,box-shadow .2s;
 }
 .field input:focus,.field select:focus,.field textarea:focus{
   outline:0;border-color:var(--green);box-shadow:0 0 0 4px rgba(60,133,88,.12);
 }
+.field input[type=range]{padding:0;border:0;accent-color:var(--green);min-height:0;height:36px}
 .field textarea{resize:vertical;min-height:104px}
-.field-row{display:grid;gap:15px;grid-template-columns:1fr 1fr}
-@media (max-width:520px){.field-row{grid-template-columns:1fr}}
 .form__note{font-size:12.5px;color:var(--muted);margin:0}
 .form__note a{color:var(--green);text-decoration:underline}
-.form__status{margin:0;font-size:14.5px;font-weight:600;color:var(--green);min-height:1.4em}
+.form__status:empty{display:none}
+.form__status{margin:0;font-size:14.5px;font-weight:600;color:var(--green)}
 
-.estimate{background:var(--mint);border-radius:var(--r);padding:clamp(22px,3vw,30px)}
-.estimate__row{display:flex;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px solid rgba(20,24,26,.08);font-size:15px}
-.estimate__row:last-of-type{border:0}
-.estimate__total{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-top:18px;padding-top:18px;border-top:1.5px solid rgba(20,24,26,.14)}
-.estimate__total b{font-family:var(--serif);font-size:clamp(26px,3.4vw,34px);color:var(--green)}
+/* ——— калькулятор ——— */
+.calc{
+  max-width:960px;margin-inline:auto;background:#fff;border:1px solid var(--line);
+  border-radius:var(--r-lg);padding:clamp(24px,3.6vw,44px);box-shadow:var(--shadow);
+  display:grid;gap:clamp(20px,2.6vw,28px);
+}
+.calc__controls{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr))}
+.calc__result{
+  display:grid;gap:4px;justify-items:center;text-align:center;
+  background:var(--mint);border-radius:var(--r);padding:clamp(20px,2.6vw,28px);
+}
+.calc__result span{font-size:13px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-2)}
+.calc__result b{font-family:var(--serif);font-size:clamp(34px,5.4vw,54px);line-height:1.1;color:var(--green)}
+.calc__result p{margin:0;font-size:14px;color:var(--muted)}
+.calc__lead{display:grid;gap:15px;grid-template-columns:1fr 1fr auto;align-items:end}
+.calc__lead .btn{height:var(--control-h);white-space:nowrap}   /* та же высота, что у полей */
+@media (max-width:720px){.calc__lead{grid-template-columns:1fr}}
+.calc__note{margin:0;font-size:12.5px;color:var(--muted);text-align:center;max-width:56ch;justify-self:center}
 
 /* ——— о компании ——— */
 .about{display:grid;gap:clamp(30px,4.5vw,64px);grid-template-columns:minmax(0,.82fr) minmax(0,1fr);align-items:center}
