@@ -9,6 +9,11 @@ const works  = window.WORKS  || [];
 const posts  = window.POSTS  || [];
 const videos = window.VIDEOS || [];
 
+/* В однофайловой сборке картинки лежат в window.ASSETS как data-URI, а страницы
+   блога живут по хешу. В обычной версии обе функции возвращают исходный путь. */
+const asset = path => (window.ASSETS && window.ASSETS[path]) || path;
+const postHref = slug => (window.ASSETS ? '#/post/' : 'post.html?slug=') + encodeURIComponent(slug);
+
 const money = n => new Intl.NumberFormat('ru-RU').format(Math.round(n / 1000) * 1000) + ' ₽';
 const ruDate = iso => new Date(iso).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
@@ -68,7 +73,10 @@ if (sections.length && navLinks.size && 'IntersectionObserver' in window) {
 
 /* ——— появление при скролле ——— */
 const reveal = () => {
-  const items = $$('.reveal:not(.is-in)');
+  // детям групп раздаём порядковый номер — из него CSS считает задержку
+  $$('.stagger').forEach(g => [...g.children].forEach((el, i) => el.style.setProperty('--i', i)));
+
+  const items = $$('.reveal:not(.is-in), .stagger:not(.is-in)');
   if (!('IntersectionObserver' in window)) return items.forEach(el => el.classList.add('is-in'));
   const io = new IntersectionObserver((entries, obs) => {
     entries.forEach(en => {
@@ -79,6 +87,69 @@ const reveal = () => {
   }, { rootMargin: '0px 0px -8% 0px', threshold: .08 });
   items.forEach(el => io.observe(el));
 };
+
+/* ——— счётчики ———
+   Цифру в подписи («8 лет», «400+», «30 дней») подкручиваем от нуля,
+   текст вокруг неё сохраняем как есть. */
+function countUp(el) {
+  const raw = el.dataset.value ?? el.textContent;
+  el.dataset.value = raw;
+  // цифра, возможно с разрядами через пробел («1 000»), но без пробела перед словом
+  const m = raw.match(/\d+(?:\s\d{3})*/);
+  if (!m) return;
+  const target = parseInt(m[0].replace(/\s/g, ''), 10);
+  if (!target) return;
+  const before = raw.slice(0, m.index), after = raw.slice(m.index + m[0].length);
+  const started = performance.now(), dur = 1100;
+  const tick = now => {
+    const t = Math.min(1, (now - started) / dur);
+    const eased = 1 - Math.pow(1 - t, 3);
+    el.textContent = before + Math.round(target * eased).toLocaleString('ru-RU') + after;
+    if (t < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+function initCounters() {
+  const nums = $$('.fact__num');
+  if (!nums.length) return;
+  if (reduceMotion || !('IntersectionObserver' in window)) return;
+  const io = new IntersectionObserver((entries, obs) => {
+    entries.forEach(en => {
+      if (!en.isIntersecting) return;
+      countUp(en.target);
+      obs.unobserve(en.target);
+    });
+  }, { threshold: .6 });
+  nums.forEach(n => io.observe(n));
+}
+
+/* ——— лёгкий параллакс фото в первом экране ——— */
+function initParallax() {
+  const media = $('.hero__media');
+  if (!media || reduceMotion) return;
+  let ticking = false;
+  const apply = () => {
+    const y = Math.min(scrollY, 900);
+    media.style.transform = `translate3d(0, ${(y * -0.06).toFixed(1)}px, 0)`;
+    ticking = false;
+  };
+  addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(apply);
+  }, { passive: true });
+  apply();
+}
+
+/* ——— картинки работ проявляются по мере загрузки ——— */
+function fadeInImages(root = document) {
+  $$('.work img', root).forEach(img => {
+    if (img.complete && img.naturalWidth) return img.classList.add('is-loaded');
+    img.addEventListener('load', () => img.classList.add('is-loaded'), { once: true });
+    img.addEventListener('error', () => img.classList.add('is-loaded'), { once: true });
+  });
+}
 
 /* ——— подборка (избранное) ——— */
 const FAV_KEY = 'yurich:favourites';
@@ -115,7 +186,7 @@ function renderDrawer() {
     const w = works.find(x => x.slug === slug);
     if (!w) return '';
     return `<div class="fav-row">
-      <img src="assets/img/works/thumb/${w.slug}.jpg" alt="" loading="lazy">
+      <img src="${asset(`assets/img/works/thumb/${w.slug}.jpg`)}" alt="" loading="lazy">
       <p>${esc(w.caption)}</p>
       <button type="button" data-remove="${w.slug}" aria-label="Убрать из подборки">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 6 12 12M18 6 6 18" stroke-linecap="round"/></svg>
@@ -145,12 +216,13 @@ function renderGallery(filter) {
   shown = works.filter(w => w.category === filter);
   gallery.innerHTML = shown.map((w, i) => `
     <figure class="work" data-index="${i}" style="animation-delay:${Math.min(i, 11) * 35}ms">
-      <img src="assets/img/works/thumb/${w.slug}.jpg" alt="${esc(w.caption)}" loading="lazy" decoding="async">
+      <img src="${asset(`assets/img/works/thumb/${w.slug}.jpg`)}" alt="${esc(w.caption)}" loading="lazy" decoding="async">
       <button class="work__fav" type="button" data-slug="${w.slug}" aria-label="Добавить в подборку">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.6-7 9-7 9Z" stroke-linejoin="round"/></svg>
       </button>
       <figcaption>${esc(w.caption)}</figcaption>
     </figure>`).join('');
+  fadeInImages(gallery);
   syncFav();
 }
 
@@ -181,7 +253,7 @@ function openLightbox(i) {
   if (!lb || !shown.length) return;
   lbIndex = (i + shown.length) % shown.length;
   const w = shown[lbIndex];
-  lbImg.src = `assets/img/works/${w.slug}.jpg`;
+  lbImg.src = asset(`assets/img/works/${w.slug}.jpg`);
   lbImg.alt = w.caption;
   lbCap.textContent = w.caption;
   lb.classList.add('is-open');
@@ -207,7 +279,7 @@ addEventListener('keydown', e => {
 
 /* ——— видео ——— */
 function videoCard(v) {
-  const cover = v.cover ? `<img class="video__cover" src="${esc(v.cover)}" alt="" loading="lazy">` : '';
+  const cover = v.cover ? `<img class="video__cover" src="${esc(asset(v.cover))}" alt="" loading="lazy">` : '';
   return `<div class="video" data-embed="${esc(v.embed)}">
     ${cover}
     <button class="video__play" type="button" aria-label="Смотреть: ${esc(v.title)}">
@@ -243,8 +315,8 @@ function renderVideos(root, limit) {
 
 /* ——— блог ——— */
 function postCard(p) {
-  return `<a class="post-card" href="post.html?slug=${encodeURIComponent(p.slug)}">
-    <div class="post-card__img"><img src="${esc(p.cover)}" alt="" loading="lazy"></div>
+  return `<a class="post-card" href="${postHref(p.slug)}">
+    <div class="post-card__img"><img src="${esc(asset(p.cover))}" alt="" loading="lazy"></div>
     <div class="post-card__body">
       <div class="post-card__meta"><span class="tag">${esc(p.tag)}</span><span>${ruDate(p.date)}</span><span>${esc(p.read)}</span></div>
       <h3>${esc(p.title)}</h3>
@@ -262,9 +334,27 @@ const allPostsRoot = $('#allPosts');
 if (allPostsRoot) allPostsRoot.innerHTML = sorted.map(postCard).join('');
 const footerPosts = $('#footerPosts');
 if (footerPosts) footerPosts.innerHTML = sorted.slice(0, 4)
-  .map(p => `<li><a href="post.html?slug=${encodeURIComponent(p.slug)}">${esc(p.title.split(':')[0])}</a></li>`).join('');
+  .map(p => `<li><a href="${postHref(p.slug)}">${esc(p.title.split(':')[0])}</a></li>`).join('');
 
 /* ——— калькулятор ——— */
+/* Плавный переход суммы: от показанной сейчас к новой, а не скачком. */
+let moneyFrame = 0;
+function tweenMoney(el, to) {
+  if (!el) return;
+  const from = Number(el.dataset.value || 0);
+  el.dataset.value = to;
+  if (reduceMotion || !from) { el.textContent = money(to); return; }
+  cancelAnimationFrame(moneyFrame);
+  const started = performance.now(), dur = 420;
+  const tick = now => {
+    const t = Math.min(1, (now - started) / dur);
+    const eased = 1 - Math.pow(1 - t, 3);
+    el.textContent = money(from + (to - from) * eased);
+    if (t < 1) moneyFrame = requestAnimationFrame(tick);
+  };
+  moneyFrame = requestAnimationFrame(tick);
+}
+
 const calcForm = $('#calcForm');
 function calculate() {
   if (!calcForm) return;
@@ -274,7 +364,7 @@ function calculate() {
   const total  = length * layout * facade;
 
   $('#lengthOut').textContent = length.toFixed(1).replace('.', ',');
-  $('#sumTotal').textContent  = money(total);
+  tweenMoney($('#sumTotal'), total);
   const hidden = $('#leadEstimate');
   if (hidden) hidden.value = `${money(total)} · ${length.toFixed(1)} м · ` +
     `${$('#layout').selectedOptions[0].text.toLowerCase()} · ${$('#facade').selectedOptions[0].text}`;
@@ -371,4 +461,6 @@ renderVideos($('#videos'), 3);
 renderVideos($('#allVideos'));
 syncFav();
 reveal();
+initCounters();
+initParallax();
 })();

@@ -1,12 +1,15 @@
-/* Страница статьи — рендер из content/posts.js по ?slug= */
+/* Страница статьи — рендер из content/posts.js.
+   Отдельная страница берёт slug из ?slug=, однофайловая сборка зовёт renderPost сама. */
 (() => {
 'use strict';
 const $ = s => document.querySelector(s);
 const posts = window.POSTS || [];
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 const ruDate = iso => new Date(iso).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+const assetUrl = path => (window.ASSETS && window.ASSETS[path]) || path;
+const href = slug => (window.ASSETS ? '#/post/' : 'post.html?slug=') + encodeURIComponent(slug);
 
-const slug = new URLSearchParams(location.search).get('slug');
+window.renderPost = function (slug) {
 const post = posts.find(p => p.slug === slug);
 
 if (!post) {
@@ -28,7 +31,7 @@ if (!post) {
 
   if (post.cover) {
     $('#articleHero').hidden = false;
-    $('#articleCover').src = post.cover;
+    $('#articleCover').src = assetUrl(post.cover);
     $('#articleCover').alt = post.title;
   }
   // body берётся из нашего же content-файла, посторонний HTML сюда не попадает
@@ -37,12 +40,16 @@ if (!post) {
   const related = posts.filter(p => p.slug !== post.slug)
     .sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3);
   $('#relatedPosts').innerHTML = related.map(p => `
-    <a class="post-card" href="post.html?slug=${encodeURIComponent(p.slug)}">
-      <div class="post-card__img"><img src="${esc(p.cover)}" alt="" loading="lazy"></div>
+    <a class="post-card" href="${href(p.slug)}">
+      <div class="post-card__img"><img src="${esc(assetUrl(p.cover))}" alt="" loading="lazy"></div>
       <div class="post-card__body">
         <div class="post-card__meta"><span class="tag">${esc(p.tag)}</span><span>${ruDate(p.date)}</span></div>
         <h3>${esc(p.title)}</h3>
         <p>${esc(p.excerpt)}</p>
       </div></a>`).join('');
 }
+};
+
+// на отдельной странице статьи запускаемся сами; в сборке это делает роутер
+if (!window.ASSETS) window.renderPost(new URLSearchParams(location.search).get('slug'));
 })();
