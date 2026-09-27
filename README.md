@@ -99,11 +99,36 @@ python3 -m http.server 8000
 
 ## Как выложить в интернет
 
-Самое простое — GitHub Pages: **Settings → Pages → Source: Deploy from a branch**,
-выберите ветку и папку `/ (root)`. Через пару минут сайт будет доступен по ссылке вида
-`https://korolxmki.github.io/yurich/`.
+**Vercel** — импортируйте репозиторий на <https://vercel.com/new>. Настраивать нечего:
+проект статический, Vercel сам отдаст `index.html` из корня. Framework Preset — `Other`,
+поля Build Command и Output Directory оставьте пустыми.
+
+**GitHub Pages** — **Settings → Pages → Source: Deploy from a branch**, выберите ветку и
+папку `/ (root)`. Сайт появится по адресу вида `https://korolxmki.github.io/yurich/`.
 
 Подойдёт и любой обычный хостинг: скопируйте туда всё содержимое папки как есть.
+
+### Версия одним файлом
+
+Если нужно закинуть сайт куда-то одним перетаскиванием — соберите его в один
+самодостаточный `index.html`:
+
+```bash
+pip install pillow
+python3 tools/build_single.py
+```
+
+Получится `dist/index.html` (~3 МБ): весь сайт внутри одного файла — стили, шрифты,
+скрипты, статьи и фотографии в виде data-URI. Ни одного внешнего запроса, работает
+даже без интернета. Блог и статьи живут на том же экране и открываются по адресам
+`#/blog` и `#/post/<slug>`.
+
+Файл **генерируется**, править его руками не нужно: меняйте исходники (`content/config.js`,
+`content/posts.js` и остальное) и пересобирайте.
+
+Для Vercel одним файлом: создайте пустую папку, положите туда `dist/index.html`
+и перетащите папку в Vercel — или поставьте Output Directory `dist`, а Build Command
+`python3 tools/build_single.py`. Но проще ничего не собирать и деплоить репозиторий как есть.
 
 ---
 
@@ -143,6 +168,7 @@ pip install pillow opencv-python-headless numpy torch simple-lama-inpainting
 python3 tools/remove_watermark.py --dry-run   # показать, где найдена ватермарка
 python3 tools/remove_watermark.py             # убрать: photos/ → photos_clean/
 python3 tools/prepare_images.py               # сделать веб-версии для сайта
+python3 tools/build_single.py                 # собрать сайт в один dist/index.html
 ```
 
 `tools/remove_watermark.py` ищет значок «B» в кольце звёзд в левом нижнем углу

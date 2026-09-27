@@ -50,7 +50,9 @@ document.addEventListener('click', e => {
   const id = a.getAttribute('href').slice(1);
   if (!id) return;
   const target = document.getElementById(id);
-  if (!target) return;
+  // цель спрятана (в однофайловой сборке — на другом экране): не перехватываем,
+  // пусть сменится хеш и роутер сам покажет нужный экран
+  if (!target || target.closest('[hidden]')) return;
   e.preventDefault();
   target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
   history.replaceState(null, '', '#' + id);
