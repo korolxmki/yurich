@@ -23,7 +23,7 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; scroll-padding-top: 92px; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
@@ -40,6 +40,7 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
 img { max-width: 100%; display: block; }
 a { color: inherit; }
 
@@ -57,6 +58,44 @@ p { margin: 0; }
 .eyebrow {
   display: inline-block; font-size: .78rem; font-weight: 700; letter-spacing: .14em;
   text-transform: uppercase; color: var(--accent-ink); margin-bottom: 14px;
+}
+
+
+/* --- Появление ------------------------------------------------------------ */
+/* Без JS класс .js не ставится и всё видно сразу — анимация только украшает. */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity .75s cubic-bezier(.22, .7, .3, 1), transform .75s cubic-bezier(.22, .7, .3, 1);
+  transition-delay: var(--d, 0ms);
+  will-change: opacity, transform;
+}
+.js .reveal.is-in { opacity: 1; transform: none; }
+.js .reveal--left  { transform: translateX(-26px); }
+.js .reveal--scale { transform: scale(.965); }
+
+@keyframes rise { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+@keyframes heroZoom { from { transform: scale(1.07); } to { transform: none; } }
+
+.js .hero h1,
+.js .hero__lead,
+.js .hero__cta,
+.js .hero__note,
+.js .stats { animation: rise .9s cubic-bezier(.22, .7, .3, 1) backwards; }
+.js .hero h1      { animation-delay: .08s; }
+.js .hero__lead   { animation-delay: .18s; }
+.js .hero__cta    { animation-delay: .28s; }
+.js .hero__note   { animation-delay: .36s; }
+.js .stats        { animation-delay: .44s; }
+.js .hero__media img { animation: heroZoom 1.8s cubic-bezier(.2, .6, .2, 1) both; }
+
+/* плитки каталога проявляются по мере подгрузки */
+.js .tile.reveal { transform: translateY(16px) scale(.98); }
+
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal { opacity: 1; transform: none; transition: none; }
+  .js .hero h1, .js .hero__lead, .js .hero__cta, .js .hero__note,
+  .js .stats, .js .hero__media img { animation: none; }
 }
 
 /* --- Кнопки --------------------------------------------------------------- */
@@ -93,7 +132,14 @@ p { margin: 0; }
 .logo__text small { font-weight: 500; font-size: .74rem; color: var(--muted); letter-spacing: .02em; }
 .nav { display: flex; gap: 26px; margin-left: auto; }
 .nav a { text-decoration: none; color: var(--ink-2); font-size: .97rem; font-weight: 500; }
+.nav a { position: relative; }
+.nav a::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 2px;
+  background: var(--accent); border-radius: 2px; transform: scaleX(0); transform-origin: left;
+  transition: transform .3s cubic-bezier(.22, .7, .3, 1);
+}
 .nav a:hover { color: var(--accent-ink); }
+.nav a:hover::after { transform: scaleX(1); }
 .header__phone { font-weight: 700; text-decoration: none; white-space: nowrap; }
 .header__actions { display: flex; align-items: center; gap: 16px; margin-left: auto; flex: none; }
 .nav + .header__actions { margin-left: 0; }
@@ -227,6 +273,7 @@ p { margin: 0; }
 
 /* --- Страница работ ------------------------------------------------------- */
 .page-head { padding: clamp(36px, 5vw, 60px) 0 0; }
+.page-lead { color: var(--muted); margin-top: 14px; max-width: 62ch; }
 .filters { display: flex; flex-wrap: wrap; gap: 9px; margin: 28px 0 8px; }
 .chip {
   border: 1px solid var(--line); background: var(--surface); color: var(--ink-2);

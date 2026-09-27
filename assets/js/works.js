@@ -1,8 +1,8 @@
-/* Каталог работ: фильтры, подгрузка по частям, лайтбокс */
+/* Каталог работ: разделы, лайтбокс. В каждом разделе показываем последние LIMIT работ. */
 (function () {
   "use strict";
 
-  var BATCH = 60;
+  var LIMIT = 10; // максимум фотографий в одном разделе
   var CATS = {
     kuhni: "Кухни",
     "shkafy-kupe": "Шкафы-купе",
@@ -16,50 +16,47 @@
   var grid = document.getElementById("grid");
   var filters = document.getElementById("filters");
   var results = document.getElementById("results");
-  var moreBtn = document.getElementById("more");
-  var moreWrap = document.getElementById("more-wrap");
 
-  var all = [];
-  var shown = [];
-  var offset = 0;
-  var current = "all";
+  var byCat = {};   // категория -> последние LIMIT фото
+  var shown = [];   // то, что сейчас в сетке
+  var current = null;
 
-  /* ---------- загрузка данных ---------- */
   fetch("assets/data/gallery.json")
     .then(function (r) {
       if (!r.ok) throw new Error(r.status);
       return r.json();
     })
     .then(function (data) {
-      all = data.slice().sort(function (a, b) {
-        return a.date < b.date ? 1 : a.date > b.date ? -1 : 0;
-      });
+      data
+        .slice()
+        .sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; })
+        .forEach(function (p) {
+          if (!CATS[p.cat]) return;
+          var list = byCat[p.cat] || (byCat[p.cat] = []);
+          if (list.length < LIMIT) list.push(p);
+        });
       buildFilters();
       applyFromHash();
     })
     .catch(function () {
-      results.textContent = "Не удалось загрузить список работ. Обновите страницу.";
+      results.textContent = "Не удалось загрузить работы. Обновите страницу.";
     });
 
-  /* ---------- фильтры ---------- */
+  function cats() {
+    return Object.keys(CATS).filter(function (c) { return byCat[c] && byCat[c].length; });
+  }
+
   function buildFilters() {
-    var counts = { all: all.length };
-    all.forEach(function (p) {
-      counts[p.cat] = (counts[p.cat] || 0) + 1;
-    });
-
-    var order = ["all"].concat(Object.keys(CATS).filter(function (c) { return counts[c]; }));
     filters.innerHTML = "";
-    order.forEach(function (key) {
+    cats().forEach(function (key) {
       var btn = document.createElement("button");
       btn.className = "chip";
       btn.type = "button";
       btn.dataset.cat = key;
       btn.setAttribute("aria-pressed", "false");
-      btn.innerHTML = (key === "all" ? "Все работы" : CATS[key]) +
-        '<span>' + counts[key] + "</span>";
+      btn.innerHTML = CATS[key] + "<span>" + byCat[key].length + "</span>";
       btn.addEventListener("click", function () {
-        location.hash = key === "all" ? "" : key;
+        location.hash = key;
         select(key);
       });
       filters.appendChild(btn);
@@ -68,52 +65,54 @@
 
   function applyFromHash() {
     var key = (location.hash || "").replace("#", "");
-    select(CATS[key] ? key : "all");
+    select(byCat[key] && byCat[key].length ? key : cats()[0]);
   }
 
   function select(cat) {
+    if (!cat || cat === current) return;
     current = cat;
     Array.prototype.forEach.call(filters.children, function (btn) {
       btn.setAttribute("aria-pressed", String(btn.dataset.cat === cat));
     });
-    shown = cat === "all" ? all : all.filter(function (p) { return p.cat === cat; });
-    offset = 0;
-    grid.innerHTML = "";
+    shown = byCat[cat];
+    results.textContent = CATS[cat] + " — " + shown.length + " " + plural(shown.length);
     render();
   }
 
+  function plural(n) {
+    var d10 = n % 10, d100 = n % 100;
+    if (d10 === 1 && d100 !== 11) return "фотография";
+    if (d10 >= 2 && d10 <= 4 && (d100 < 10 || d100 >= 20)) return "фотографии";
+    return "фотографий";
+  }
+
   function render() {
-    var slice = shown.slice(offset, offset + BATCH);
+    grid.innerHTML = "";
     var frag = document.createDocumentFragment();
 
-    slice.forEach(function (p, i) {
-      var idx = offset + i;
+    shown.forEach(function (p, i) {
       var btn = document.createElement("button");
       btn.className = "tile";
       btn.type = "button";
-      btn.dataset.index = idx;
-      btn.setAttribute("aria-label", "Открыть фото: " + (CATS[p.cat] || p.cat));
+      btn.dataset.index = i;
+      btn.setAttribute("aria-label", "Открыть фото: " + CATS[p.cat]);
 
       var img = document.createElement("img");
       img.src = p.thumb;
-      img.loading = "lazy";
+      img.loading = i < 4 ? "eager" : "lazy";
       img.decoding = "async";
       img.width = p.w;
       img.height = p.h;
-      img.alt = (CATS[p.cat] || p.cat) + " на заказ, Челябинск — работа мастерской";
+      img.alt = CATS[p.cat] + " на заказ, Челябинск — работа мастерской";
+
       btn.appendChild(img);
       frag.appendChild(btn);
+      if (window.revealWatch) window.revealWatch(btn, i * 60);
     });
 
     grid.appendChild(frag);
-    offset += slice.length;
-
-    results.textContent = "Показано " + offset + " из " + shown.length +
-      (current === "all" ? " работ" : " — " + CATS[current].toLowerCase());
-    moreWrap.hidden = offset >= shown.length;
   }
 
-  moreBtn.addEventListener("click", render);
   window.addEventListener("hashchange", applyFromHash);
 
   /* ---------- лайтбокс ---------- */
@@ -151,8 +150,8 @@
     var p = shown[lbIndex];
     if (!p) return;
     lbImg.src = p.src;
-    lbImg.alt = (CATS[p.cat] || p.cat) + " на заказ — фото работы";
-    lbBar.textContent = (CATS[p.cat] || "") + " · " + (lbIndex + 1) + " из " + shown.length;
+    lbImg.alt = CATS[p.cat] + " на заказ — фото работы";
+    lbBar.textContent = CATS[p.cat] + " · " + (lbIndex + 1) + " из " + shown.length;
 
     [1, -1].forEach(function (d) { // предзагрузка соседних кадров
       var n = shown[(lbIndex + d + shown.length) % shown.length];
