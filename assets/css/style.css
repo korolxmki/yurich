@@ -90,7 +90,7 @@ p { margin: 0; }
 .js .hero__media img { animation: heroZoom 1.8s cubic-bezier(.2, .6, .2, 1) both; }
 
 /* плитки каталога проявляются по мере подгрузки */
-.js .tile.reveal { transform: translateY(16px) scale(.98); }
+.js .tile.reveal:not(.is-in) { transform: translateY(16px) scale(.98); }
 
 @media (prefers-reduced-motion: reduce) {
   .js .reveal { opacity: 1; transform: none; transition: none; }
