@@ -171,7 +171,7 @@ function syncFav() {
   const n = favourites.length;
   if (favBtn)   favBtn.classList.toggle('has-items', n > 0);
   if (favCount) favCount.textContent = String(n);
-  if (favLabel) favLabel.textContent = n ? (n === 1 ? '1 работа' : `${n} ${n < 5 ? 'работы' : 'работ'}`) : 'Корзина пуста';
+  if (favLabel) favLabel.textContent = n ? (n === 1 ? '1 работа' : `${n} ${n < 5 ? 'работы' : 'работ'}`) : 'Подборка';
   $$('.work__fav').forEach(b => b.classList.toggle('is-on', favourites.includes(b.dataset.slug)));
   const hidden = $('#leadFavourites');
   if (hidden) hidden.value = favourites.join(', ');
@@ -181,7 +181,9 @@ function syncFav() {
 function renderDrawer() {
   if (!drawerBody) return;
   if (!favourites.length) {
-    drawerBody.innerHTML = '<p class="drawer__empty">Пока пусто. Отмечайте понравившиеся работы сердечком — мы обсудим их на замере.</p>';
+    drawerBody.innerHTML = '<p class="drawer__empty">Здесь копятся кухни, которые вам понравились.<br><br>' +
+      'Нажимайте сердечко на фото в разделе «Работы» — отмеченное уедет вместе с заявкой, ' +
+      'и на замере мы сразу будем понимать, что вам по вкусу.</p>';
     return;
   }
   drawerBody.innerHTML = favourites.map(slug => {

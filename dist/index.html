@@ -111,7 +111,9 @@ button,input,select,textarea{font:inherit;color:inherit}
   font-family:var(--serif);font-weight:500;line-height:1.04;letter-spacing:-.01em;
   text-transform:uppercase;margin:0;
 }
-h1.display{font-size:clamp(38px,6.6vw,78px)}
+/* Коэффициент подобран так, чтобы самая длинная строка («ПРОСТРАНСТВО»)
+   помещалась в текстовую колонку первого экрана на всех ширинах. */
+h1.display{font-size:clamp(38px,5.8vw,72px)}
 h2.display{font-size:clamp(30px,4.6vw,54px)}
 h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);line-height:1.22;margin:0}
 .eyebrow{
@@ -208,7 +210,7 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
 .burger[aria-expanded=true] span:nth-child(2){opacity:0}
 .burger[aria-expanded=true] span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
 
-@media (max-width:920px){
+@media (max-width:1040px){
   .burger{display:block}
   .header__phone{display:none}
   .nav{
@@ -230,7 +232,9 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
 .hero__inner{
   position:relative;z-index:2;display:grid;gap:clamp(24px,4vw,40px);
   grid-template-columns:minmax(0,1fr) minmax(0,.86fr);align-items:center;
-  min-height:min(78vh,720px);padding:clamp(40px,6vw,72px) 0 0;
+  /* только вертикальный отступ: короткая запись padding перетирала
+     padding-inline из .wrap и первый экран прилипал к краям */
+  min-height:min(78vh,720px);padding-block:clamp(40px,6vw,72px) 0;
 }
 .hero__title{margin-bottom:22px}
 .hero__title span{display:block}
@@ -259,8 +263,8 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
 .hero__badge b{display:block;font-size:15px;line-height:1.2}
 .hero__badge small{color:var(--muted);font-size:12.5px}
 
-@media (max-width:900px){
-  .hero__inner{grid-template-columns:1fr;min-height:0;padding-top:34px}
+@media (max-width:1040px){
+  .hero__inner{grid-template-columns:1fr;min-height:0;padding-block-start:34px}
   .hero__sub{margin-bottom:26px}
   .hero__facts{padding-bottom:30px}
   .hero__media{max-width:340px;margin-top:8px}
@@ -615,11 +619,11 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
     <div class="header__side">
       <!-- ЗАМЕНИТЕ телефон на реальный (см. README) -->
       <a class="header__phone" href="tel:+79991234567" data-site="tel">+7 999 123-45-67</a>
-      <button class="cart-chip" id="favBtn" aria-label="Открыть подборку">
+      <button class="cart-chip" id="favBtn" title="Кухни, которые вы отметили сердечком" aria-label="Открыть подборку">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
-          <path d="M3 6h18l-2 12H5L3 6Z" stroke-linejoin="round"/><path d="M8 6a4 4 0 0 1 8 0"/>
+          <path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.6-7 9-7 9Z" stroke-linejoin="round"/>
         </svg>
-        <span id="favLabel">Корзина пуста</span>
+        <span id="favLabel">Подборка</span>
         <i class="cart-chip__count" id="favCount">0</i>
       </button>
       <button class="burger" id="burger" aria-label="Меню" aria-expanded="false" aria-controls="nav">
@@ -1463,7 +1467,7 @@ function syncFav() {
   const n = favourites.length;
   if (favBtn)   favBtn.classList.toggle('has-items', n > 0);
   if (favCount) favCount.textContent = String(n);
-  if (favLabel) favLabel.textContent = n ? (n === 1 ? '1 работа' : `${n} ${n < 5 ? 'работы' : 'работ'}`) : 'Корзина пуста';
+  if (favLabel) favLabel.textContent = n ? (n === 1 ? '1 работа' : `${n} ${n < 5 ? 'работы' : 'работ'}`) : 'Подборка';
   $$('.work__fav').forEach(b => b.classList.toggle('is-on', favourites.includes(b.dataset.slug)));
   const hidden = $('#leadFavourites');
   if (hidden) hidden.value = favourites.join(', ');
@@ -1473,7 +1477,9 @@ function syncFav() {
 function renderDrawer() {
   if (!drawerBody) return;
   if (!favourites.length) {
-    drawerBody.innerHTML = '<p class="drawer__empty">Пока пусто. Отмечайте понравившиеся работы сердечком — мы обсудим их на замере.</p>';
+    drawerBody.innerHTML = '<p class="drawer__empty">Здесь копятся кухни, которые вам понравились.<br><br>' +
+      'Нажимайте сердечко на фото в разделе «Работы» — отмеченное уедет вместе с заявкой, ' +
+      'и на замере мы сразу будем понимать, что вам по вкусу.</p>';
     return;
   }
   drawerBody.innerHTML = favourites.map(slug => {
