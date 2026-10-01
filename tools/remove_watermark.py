@@ -18,39 +18,51 @@ TPL = cv2.imread(os.path.join(HERE, 'watermark_template.png'), 0)
 AR = TPL.shape[0] / TPL.shape[1]
 
 
-def locate(img):
-    """Best badge candidate in the bottom-left corner: (box, score, contrast)."""
+def locate(img, anywhere=False):
+    """Best badge candidate: (box, score, contrast).
+
+    By default only the bottom-left corner is searched, which is where the first
+    batch of photos carried the badge. `anywhere` scans the whole frame instead —
+    later batches put it bottom-right and bottom-centre too.
+    """
     h, w = img.shape[:2]
-    oy, ox = int(h * 0.72), int(w * 0.30)
+    oy, ox = (0, w) if anywhere else (int(h * 0.72), int(w * 0.30))
     gray = cv2.GaussianBlur(cv2.cvtColor(img[oy:h, 0:ox], cv2.COLOR_BGR2GRAY), (3, 3), 0)
 
+    lo, hi = (int(0.05 * h), int(0.20 * h)) if anywhere else (max(30, int(0.09 * h)), int(0.17 * h))
     best = (-2.0, None)
-    for side in range(max(30, int(0.09 * h)), int(0.17 * h), 2):
+    for side in range(max(24, lo), max(lo + 4, hi), 2):
         tw, th = side, int(side * AR)
         if th >= gray.shape[0] or tw >= gray.shape[1]:
             continue
         t = cv2.resize(TPL, (tw, th), interpolation=cv2.INTER_AREA)
-        _, mx, _, loc = cv2.minMaxLoc(cv2.matchTemplate(gray, t, cv2.TM_CCOEFF_NORMED))
-        if mx > best[0]:
-            best = (mx, (loc[0], oy + loc[1], tw, th))
+        # знак встречается и белым, и чёрным: на тёмный шаблон отклик
+        # отрицательный, поэтому берём лучший из двух полярностей
+        for probe in (t, 255 - t):
+            _, mx, _, loc = cv2.minMaxLoc(cv2.matchTemplate(gray, probe, cv2.TM_CCOEFF_NORMED))
+            if mx > best[0]:
+                best = (mx, (loc[0], oy + loc[1], tw, th))
     score, box = best
     if box is None:
         return None, -1.0, -1.0
     bx, by, bw, bh = box
     stamp = cv2.resize(TPL, (bw, bh), interpolation=cv2.INTER_AREA) > 127
     patch = cv2.cvtColor(img[by:by + bh, bx:bx + bw], cv2.COLOR_BGR2GRAY).astype(float)
-    return box, score, float(patch[stamp].mean() - patch[~stamp].mean())
+    # знак бывает тёмным — знак разницы не важен, важна её величина
+    return box, score, abs(float(patch[stamp].mean() - patch[~stamp].mean()))
 
 
-def is_watermark(img, box, score, contrast):
-    """A strong shape match, or a weaker one that still sits hard in the corner."""
+def is_watermark(img, box, score, contrast, anywhere=False):
+    """A strong shape match, or a weaker one that still sits hard in a corner."""
     if box is None:
         return False
     if score > 0.45:
         return True
     h, w = img.shape[:2]
     bx, by, bw, bh = box
-    in_corner = bx < 0.06 * w and (h - by - bh) < 0.06 * h
+    near_bottom = (h - by - bh) < 0.08 * h
+    near_side = bx < 0.08 * w or (w - bx - bw) < 0.08 * w
+    in_corner = near_bottom and (near_side if anywhere else bx < 0.06 * w)
     return score > 0.25 and contrast > 40 and in_corner
 
 
@@ -105,6 +117,8 @@ def main():
     ap.add_argument('--src', default='photos')
     ap.add_argument('--out', default='photos_clean')
     ap.add_argument('--dry-run', action='store_true')
+    ap.add_argument('--anywhere', action='store_true',
+                    help='искать знак по всему кадру, а не только в левом нижнем углу')
     a = ap.parse_args()
 
     files = sorted(glob.glob(os.path.join(a.src, '*.jpg')))
@@ -118,8 +132,8 @@ def main():
     for f in files:
         name = os.path.basename(f)
         img = cv2.imread(f)
-        box, score, contrast = locate(img)
-        hit = is_watermark(img, box, score, contrast)
+        box, score, contrast = locate(img, a.anywhere)
+        hit = is_watermark(img, box, score, contrast, a.anywhere)
         report[name] = {'watermark': bool(hit), 'box': list(map(int, box)) if box else None,
                         'score': round(score, 3), 'contrast': round(contrast, 1)}
         print(f'{name:40} {"WM" if hit else "--"} score={score:.3f} contrast={contrast:6.1f}')
@@ -131,7 +145,8 @@ def main():
             continue
         cv2.imwrite(dst, inpaint(lama, img, box), [cv2.IMWRITE_JPEG_QUALITY, 95])
 
-    json.dump(report, open(os.path.join(HERE, 'watermark_report.json'), 'w'), indent=1)
+    name = 'watermark_report.json' if a.src == 'photos' else 'watermark_report_%s.json' % os.path.basename(a.src.rstrip('/'))
+    json.dump(report, open(os.path.join(HERE, name), 'w'), indent=1)
     print(f'\n{sum(v["watermark"] for v in report.values())} of {len(report)} photos carried the watermark')
 
 

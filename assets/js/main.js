@@ -153,64 +153,6 @@ function fadeInImages(root = document) {
   });
 }
 
-/* ——— подборка (избранное) ——— */
-const FAV_KEY = 'yurich:favourites';
-const readFav = () => {
-  try { return JSON.parse(localStorage.getItem(FAV_KEY)) || []; } catch { return []; }
-};
-const writeFav = list => {
-  try { localStorage.setItem(FAV_KEY, JSON.stringify(list)); } catch { /* приватный режим */ }
-};
-let favourites = readFav();
-
-const favBtn = $('#favBtn'), favLabel = $('#favLabel'), favCount = $('#favCount');
-const drawer = $('#drawer'), overlay = $('#overlay'), drawerBody = $('#drawerBody');
-
-function syncFav() {
-  writeFav(favourites);
-  const n = favourites.length;
-  if (favBtn)   favBtn.classList.toggle('has-items', n > 0);
-  if (favCount) favCount.textContent = String(n);
-  if (favLabel) favLabel.textContent = n ? (n === 1 ? '1 работа' : `${n} ${n < 5 ? 'работы' : 'работ'}`) : 'Подборка';
-  $$('.work__fav').forEach(b => b.classList.toggle('is-on', favourites.includes(b.dataset.slug)));
-  const hidden = $('#leadFavourites');
-  if (hidden) hidden.value = favourites.join(', ');
-  renderDrawer();
-}
-
-function renderDrawer() {
-  if (!drawerBody) return;
-  if (!favourites.length) {
-    drawerBody.innerHTML = '<p class="drawer__empty">Здесь копятся кухни, которые вам понравились.<br><br>' +
-      'Нажимайте сердечко на фото в разделе «Работы» — отмеченное уедет вместе с заявкой, ' +
-      'и на замере мы сразу будем понимать, что вам по вкусу.</p>';
-    return;
-  }
-  drawerBody.innerHTML = favourites.map(slug => {
-    const w = works.find(x => x.slug === slug);
-    if (!w) return '';
-    return `<div class="fav-row">
-      <img src="${asset(`assets/img/works/thumb/${w.slug}.jpg`)}" alt="" loading="lazy">
-      <p>${esc(w.caption)}</p>
-      <button type="button" data-remove="${w.slug}" aria-label="Убрать из подборки">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 6 12 12M18 6 6 18" stroke-linecap="round"/></svg>
-      </button></div>`;
-  }).join('');
-}
-
-const openDrawer = () => { drawer?.classList.add('is-open'); overlay?.classList.add('is-open'); };
-const closeDrawer = () => { drawer?.classList.remove('is-open'); overlay?.classList.remove('is-open'); };
-favBtn?.addEventListener('click', openDrawer);
-$('#drawerClose')?.addEventListener('click', closeDrawer);
-overlay?.addEventListener('click', closeDrawer);
-$('#drawerCta')?.addEventListener('click', closeDrawer);
-drawerBody?.addEventListener('click', e => {
-  const btn = e.target.closest('[data-remove]');
-  if (!btn) return;
-  favourites = favourites.filter(s => s !== btn.dataset.remove);
-  syncFav();
-});
-
 /* ——— портфолио ——— */
 const gallery = $('#gallery');
 let shown = works;
@@ -221,13 +163,9 @@ function renderGallery(filter) {
   gallery.innerHTML = shown.map((w, i) => `
     <figure class="work" data-index="${i}" style="animation-delay:${Math.min(i, 11) * 35}ms">
       <img src="${asset(`assets/img/works/thumb/${w.slug}.jpg`)}" alt="${esc(w.caption)}" loading="lazy" decoding="async">
-      <button class="work__fav" type="button" data-slug="${w.slug}" aria-label="Добавить в подборку">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.6-7 9-7 9Z" stroke-linejoin="round"/></svg>
-      </button>
       <figcaption>${esc(w.caption)}</figcaption>
     </figure>`).join('');
   fadeInImages(gallery);
-  syncFav();
 }
 
 $('#filters')?.addEventListener('click', e => {
@@ -238,13 +176,6 @@ $('#filters')?.addEventListener('click', e => {
 });
 
 gallery?.addEventListener('click', e => {
-  const fav = e.target.closest('.work__fav');
-  if (fav) {
-    const slug = fav.dataset.slug;
-    favourites = favourites.includes(slug) ? favourites.filter(s => s !== slug) : [...favourites, slug];
-    syncFav();
-    return;
-  }
   const fig = e.target.closest('.work');
   if (fig) openLightbox(Number(fig.dataset.index));
 });
@@ -272,10 +203,7 @@ $('#lbPrev') ?.addEventListener('click', () => openLightbox(lbIndex - 1));
 $('#lbNext') ?.addEventListener('click', () => openLightbox(lbIndex + 1));
 lb?.addEventListener('click', e => { if (e.target === lb) closeLightbox(); });
 addEventListener('keydown', e => {
-  if (!lb?.classList.contains('is-open')) {
-    if (e.key === 'Escape') closeDrawer();
-    return;
-  }
+  if (!lb?.classList.contains('is-open')) return;
   if (e.key === 'Escape')     closeLightbox();
   if (e.key === 'ArrowLeft')  openLightbox(lbIndex - 1);
   if (e.key === 'ArrowRight') openLightbox(lbIndex + 1);
@@ -403,13 +331,11 @@ applyConfig();
 /* ——— заявка ——— */
 function leadText(name, phone) {
   const est = $('#leadEstimate')?.value;
-  const fav = favourites.map(s => works.find(w => w.slug === s)?.caption).filter(Boolean);
   return [
     'Заявка с сайта «Юрич Мебель»',
     `Имя: ${name}`,
     `Телефон: ${phone}`,
     est ? `Расчёт: ${est}` : '',
-    fav.length ? `Понравилось: ${fav.join('; ')}` : '',
   ].filter(Boolean).join('\n');
 }
 
@@ -424,35 +350,64 @@ $('#leadForm')?.addEventListener('submit', async e => {
   if (phone.replace(/\D/g, '').length < 10) return say(status, 'Проверьте номер телефона.', true);
 
   const text = leadText(name, phone);
-
-  // Обработчик формы не настроен — открываем WhatsApp с готовым текстом,
-  // чтобы заявка всё равно дошла, а не исчезла в никуда.
-  if (!cfg.formEndpoint) {
-    if (!cfg.whatsapp) return say(status, 'Форма ещё не подключена. Позвоните нам: ' + (cfg.phone || ''), true);
-    open(`https://wa.me/${cfg.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
-    say(status, 'Открыли WhatsApp с готовым сообщением — осталось нажать «Отправить».');
-    return;
-  }
-
   const btn = form.querySelector('button[type=submit]');
+
+  // Ни один канал не настроен — открываем WhatsApp с готовым текстом,
+  // чтобы заявка всё равно дошла, а не исчезла в никуда.
+  if (!cfg.bitrixWebhook && !cfg.formEndpoint) return viaWhatsApp(text, status);
+
   btn.disabled = true;
   say(status, 'Отправляем…');
   try {
-    const res = await fetch(cfg.formEndpoint, {
-      method: 'POST',
-      headers: { 'Accept': 'application/json' },
-      body: new FormData(form),
-    });
-    if (!res.ok) throw new Error(res.status);
+    if (cfg.bitrixWebhook) await sendToBitrix(name, phone);
+    else await sendToEndpoint(form);
     say(status, 'Заявка отправлена — перезвоним в течение рабочего дня.');
     form.reset();
     calculate();
-  } catch {
-    say(status, `Не удалось отправить. Позвоните нам: ${cfg.phone || ''}`, true);
+  } catch (err) {
+    // CRM не ответила — не теряем заявку, уводим в WhatsApp
+    console.warn('Заявку не удалось отправить:', err);
+    if (!viaWhatsApp(text, status)) {
+      say(status, `Не удалось отправить. Позвоните нам: ${cfg.phone || ''}`, true);
+    }
   } finally {
     btn.disabled = false;
   }
 });
+
+/* Лид в Битрикс24 через входящий вебхук: crm.lead.add */
+async function sendToBitrix(name, phone) {
+  const base = cfg.bitrixWebhook.replace(/\/+$/, '');
+  const body = new URLSearchParams();
+  body.set('fields[TITLE]', `Заявка с сайта — ${name}`);
+  body.set('fields[NAME]', name);
+  body.set('fields[PHONE][0][VALUE]', phone);
+  body.set('fields[PHONE][0][VALUE_TYPE]', 'WORK');
+  body.set('fields[SOURCE_ID]', cfg.bitrixSource || 'WEB');
+  const est = $('#leadEstimate')?.value;
+  if (est) body.set('fields[COMMENTS]', 'Расчёт на сайте: ' + est);
+
+  const res = await fetch(base + '/crm.lead.add.json', { method: 'POST', body });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || data.error) throw new Error(data.error_description || data.error || res.status);
+  return data.result;
+}
+
+async function sendToEndpoint(form) {
+  const res = await fetch(cfg.formEndpoint, {
+    method: 'POST',
+    headers: { 'Accept': 'application/json' },
+    body: new FormData(form),
+  });
+  if (!res.ok) throw new Error(res.status);
+}
+
+function viaWhatsApp(text, status) {
+  if (!cfg.whatsapp) return false;
+  open(`https://wa.me/${cfg.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
+  say(status, 'Открыли WhatsApp с готовым сообщением — осталось нажать «Отправить».');
+  return true;
+}
 function say(el, msg, isError) { el.style.color = isError ? '#C0392B' : ''; el.textContent = msg; }
 
 /* ——— мелочи ——— */
@@ -463,7 +418,6 @@ if (year) year.textContent = String(new Date().getFullYear());
 renderGallery($('.filter.is-active')?.dataset.filter || works[0]?.category);
 renderVideos($('#videos'), 3);
 renderVideos($('#allVideos'));
-syncFav();
 reveal();
 initCounters();
 initParallax();

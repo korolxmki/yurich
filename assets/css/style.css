@@ -7,7 +7,7 @@
   --white:#fff;
   --serif:'Playfair Display',Georgia,serif;
   --sans:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-  --wrap:1240px; --pad:clamp(16px,4vw,40px);
+  --wrap:1240px; --pad:clamp(22px,5vw,40px);
   --r:18px; --r-lg:28px; --control-h:56px;
   --shadow:0 18px 50px -24px rgba(20,24,26,.28);
   --shadow-lg:0 40px 90px -40px rgba(20,24,26,.4);
@@ -90,9 +90,12 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
 .header.is-stuck{box-shadow:0 8px 28px -22px rgba(20,24,26,.6);border-color:var(--line);
   background:color-mix(in srgb,var(--mint) 88%,transparent);backdrop-filter:blur(12px)}
 .header__inner{display:flex;align-items:center;gap:28px;min-height:76px}
-.logo{display:inline-flex;align-items:center;gap:11px;flex-shrink:0}
+/* логотип при нехватке места ужимается и обрезается многоточием,
+   а не распирает шапку и всю страницу вместе с ней */
+.logo{display:inline-flex;align-items:center;gap:11px;min-width:0}
 .logo__mark{width:26px;height:26px;color:var(--green);flex-shrink:0}
-.logo__text{font-family:var(--serif);font-size:19px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap}
+.logo__text{font-family:var(--serif);font-size:19px;font-weight:600;letter-spacing:.07em;
+  text-transform:uppercase;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
 .nav{display:flex;gap:clamp(18px,2.6vw,42px);margin-inline:auto}
 .nav a{
   position:relative;font-size:13px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;
@@ -107,19 +110,32 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
 .header__side{display:flex;align-items:center;gap:12px;flex-shrink:0}
 .header__phone{font-weight:700;font-size:15px;white-space:nowrap}
 
-.cart-chip{
-  display:inline-flex;align-items:center;gap:11px;padding:11px 16px;border-radius:14px;
-  background:#fff;border:1px solid var(--line);box-shadow:var(--shadow);
-  font-size:14px;font-weight:600;cursor:pointer;transition:transform .2s var(--ease);
+/* кнопка-призыв в шапке — вместо прежней корзины */
+.header__cta{padding:12px 22px;font-size:13px;white-space:nowrap}
+.header__cta-short{display:none}
+
+/* на узком телефоне в шапку помещается только короткая подпись */
+@media (max-width:620px){
+  .header__cta-full{display:none}
+  .header__cta-short{display:inline}
+  .header__cta{padding:11px 15px;font-size:12px}
+  .logo__text{font-size:16px;letter-spacing:.05em}
+  .logo__mark{width:22px;height:22px}
+  .header__inner{gap:10px}
 }
-.cart-chip:hover{transform:translateY(-1px)}
-.cart-chip svg{width:19px;height:19px;color:var(--ink-2);flex-shrink:0}
-.cart-chip__count{
-  display:none;min-width:20px;height:20px;padding:0 6px;border-radius:999px;
-  background:var(--green);color:#fff;font-size:12px;font-weight:800;
-  align-items:center;justify-content:center;
+/* ниже 340px минимальный кегль не вмещает длинные слова —
+   «ПРОСТРАНСТВО» в первом экране и «ПРЕДВАРИТЕЛЬНАЯ» в расчёте */
+@media (max-width:340px){
+  h1.display{font-size:30px}
+  h2.display{font-size:25px}
 }
-.cart-chip.has-items .cart-chip__count{display:inline-flex}
+
+@media (max-width:380px){
+  .header__inner{gap:7px}
+  .logo__text{font-size:15px}
+  .logo__mark{width:20px;height:20px}
+  .header__cta{padding:10px 12px;font-size:11.5px}
+}
 
 .burger{
   display:none;position:relative;width:44px;height:44px;padding:0;cursor:pointer;
@@ -146,7 +162,7 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
   }
   .nav.is-open{transform:none}
   .nav a{padding:15px 0;border-bottom:1px solid var(--line);font-size:15px}
-  .cart-chip span:not(.cart-chip__count){display:none}
+  .header__cta{padding:11px 18px;font-size:12px}
 }
 
 /* ——— первый экран ——— */
@@ -162,6 +178,7 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
      padding-inline из .wrap и первый экран прилипал к краям */
   min-height:min(78vh,720px);padding-block:clamp(40px,6vw,72px) 0;
 }
+.hero__text{min-width:0}        /* длинное слово не должно растягивать колонку */
 .hero__title{margin-bottom:22px}
 .hero__title span{display:block}
 .hero__sub{font-size:clamp(17px,1.9vw,20px);color:var(--ink-2);max-width:44ch;margin:0 0 34px}
@@ -183,7 +200,11 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
 .hero__badge{
   position:absolute;z-index:3;left:-6%;bottom:16%;display:flex;align-items:center;gap:13px;
   padding:14px 19px;border-radius:16px;background:#fff;box-shadow:var(--shadow);
+  text-align:left;border:0;cursor:pointer;font:inherit;color:inherit;
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease);
 }
+.hero__badge:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.hero__badge .hero__badge-cta{color:var(--green);font-weight:700}
 .hero__badge svg{width:26px;height:26px;color:var(--green);flex-shrink:0}
 .hero__badge>div{white-space:nowrap}
 .hero__badge b{display:block;font-size:15px;line-height:1.2}
@@ -250,15 +271,6 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
   opacity:0;transform:translateY(8px);transition:.35s var(--ease);
 }
 .work:hover figcaption,.work:focus-within figcaption{opacity:1;transform:none}
-.work__fav{
-  position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:50%;border:0;
-  background:rgba(255,255,255,.9);backdrop-filter:blur(6px);display:grid;place-items:center;
-  cursor:pointer;opacity:0;transform:scale(.8);transition:.28s var(--ease);
-}
-.work:hover .work__fav,.work__fav:focus-visible,.work__fav.is-on{opacity:1;transform:none}
-.work__fav svg{width:18px;height:18px;fill:none;stroke:var(--ink);stroke-width:1.8}
-.work__fav.is-on svg{fill:var(--green);stroke:var(--green)}
-
 /* ——— этапы ——— */
 .steps{display:grid;gap:clamp(14px,1.8vw,20px);grid-template-columns:repeat(auto-fit,minmax(215px,1fr));counter-reset:s}
 .step{position:relative;padding:30px 24px;border-radius:var(--r-lg);background:#fff;border:1px solid var(--line)}
@@ -414,27 +426,6 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
 .lightbox__next{right:clamp(10px,2vw,28px);top:50%;translate:0 -50%}
 @media (max-width:640px){.lightbox__prev{left:10px}.lightbox__next{right:10px}}
 
-/* ——— панель подборки ——— */
-.drawer{
-  position:fixed;inset:0 0 0 auto;z-index:90;width:min(420px,100%);background:#fff;
-  box-shadow:var(--shadow-lg);transform:translateX(102%);transition:transform .4s var(--ease);
-  display:flex;flex-direction:column;
-}
-.drawer.is-open{transform:none}
-.drawer__head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px var(--pad);border-bottom:1px solid var(--line)}
-.drawer__head h3{font-size:21px}
-.drawer__close{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:#fff;cursor:pointer;display:grid;place-items:center}
-.drawer__body{flex:1;overflow-y:auto;padding:var(--pad);display:grid;gap:13px;align-content:start}
-.drawer__foot{padding:var(--pad);border-top:1px solid var(--line);display:grid;gap:11px}
-.drawer__empty{color:var(--muted);text-align:center;padding:44px 0;font-size:15px}
-.fav-row{display:flex;gap:14px;align-items:center}
-.fav-row img{width:76px;height:76px;border-radius:13px;object-fit:cover;flex-shrink:0}
-.fav-row p{margin:0;font-size:14.5px;font-weight:600;flex:1}
-.fav-row button{border:0;background:none;cursor:pointer;color:var(--muted);padding:6px;border-radius:8px}
-.fav-row button:hover{color:var(--green)}
-.overlay{position:fixed;inset:0;z-index:80;background:rgba(12,16,14,.5);opacity:0;visibility:hidden;transition:.3s}
-.overlay.is-open{opacity:1;visibility:visible}
-
 /* ——— страница статьи ——— */
 .article{max-width:760px;margin-inline:auto}
 .article__hero{aspect-ratio:16/8;border-radius:var(--r-lg);overflow:hidden;background:var(--sand);margin-bottom:clamp(28px,4vw,44px)}
@@ -504,9 +495,6 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
 @keyframes lbIn{from{opacity:0;transform:scale(.965)}to{opacity:1;transform:none}}
 .lightbox.is-open > div{animation:lbIn .38s var(--ease) both}
 .lightbox__btn{opacity:0;animation:rise .4s var(--ease) .16s forwards}
-
-/* ——— панель подборки ——— */
-.drawer__body .fav-row{animation:rise .4s var(--ease) both}
 
 /* Полное уважение к системной настройке «меньше движения»:
    гасим и появления, и входную анимацию, и параллакс (его снимает JS). */

@@ -1,0 +1,222 @@
+{
+ "p01_1.jpg": {
+  "watermark": true,
+  "box": [
+   83,
+   1042,
+   142,
+   134
+  ],
+  "score": 0.877,
+  "contrast": 163.4
+ },
+ "p02_1.jpg": {
+  "watermark": true,
+  "box": [
+   83,
+   1042,
+   142,
+   134
+  ],
+  "score": 0.935,
+  "contrast": 170.3
+ },
+ "p03_1.jpg": {
+  "watermark": true,
+  "box": [
+   815,
+   1048,
+   142,
+   134
+  ],
+  "score": 0.956,
+  "contrast": 143.2
+ },
+ "p04_1.jpg": {
+  "watermark": true,
+  "box": [
+   815,
+   1048,
+   142,
+   134
+  ],
+  "score": 0.96,
+  "contrast": 185.5
+ },
+ "p05_1.jpg": {
+  "watermark": true,
+  "box": [
+   83,
+   1021,
+   142,
+   134
+  ],
+  "score": 0.788,
+  "contrast": 122.3
+ },
+ "p06_1.jpg": {
+  "watermark": true,
+  "box": [
+   774,
+   1048,
+   142,
+   134
+  ],
+  "score": 0.902,
+  "contrast": 81.4
+ },
+ "p07_1.jpg": {
+  "watermark": true,
+  "box": [
+   103,
+   1021,
+   142,
+   134
+  ],
+  "score": 0.869,
+  "contrast": 131.2
+ },
+ "p08_1.jpg": {
+  "watermark": true,
+  "box": [
+   54,
+   509,
+   72,
+   68
+  ],
+  "score": 0.798,
+  "contrast": 89.3
+ },
+ "p09_1.jpg": {
+  "watermark": true,
+  "box": [
+   801,
+   1048,
+   162,
+   153
+  ],
+  "score": 0.938,
+  "contrast": 143.7
+ },
+ "p10_1.jpg": {
+  "watermark": true,
+  "box": [
+   40,
+   406,
+   72,
+   68
+  ],
+  "score": 0.922,
+  "contrast": 99.6
+ },
+ "p11_1.jpg": {
+  "watermark": true,
+  "box": [
+   108,
+   876,
+   120,
+   113
+  ],
+  "score": 0.766,
+  "contrast": 126.7
+ },
+ "p12_1.jpg": {
+  "watermark": true,
+  "box": [
+   108,
+   876,
+   120,
+   113
+  ],
+  "score": 0.895,
+  "contrast": 100.4
+ },
+ "p13_1.jpg": {
+  "watermark": true,
+  "box": [
+   622,
+   404,
+   72,
+   68
+  ],
+  "score": 0.722,
+  "contrast": 52.4
+ },
+ "p14_1.jpg": {
+  "watermark": true,
+  "box": [
+   44,
+   404,
+   72,
+   68
+  ],
+  "score": 0.913,
+  "contrast": 160.0
+ },
+ "p15_1.jpg": {
+  "watermark": true,
+  "box": [
+   806,
+   1021,
+   142,
+   134
+  ],
+  "score": 0.783,
+  "contrast": 136.3
+ },
+ "p16_1.jpg": {
+  "watermark": true,
+  "box": [
+   86,
+   851,
+   138,
+   130
+  ],
+  "score": 0.951,
+  "contrast": 118.2
+ },
+ "p17_1.jpg": {
+  "watermark": true,
+  "box": [
+   91,
+   98,
+   138,
+   130
+  ],
+  "score": 0.729,
+  "contrast": 75.5
+ },
+ "p18_1.jpg": {
+  "watermark": true,
+  "box": [
+   818,
+   1058,
+   128,
+   121
+  ],
+  "score": 0.88,
+  "contrast": 63.2
+ },
+ "p19_1.jpg": {
+  "watermark": true,
+  "box": [
+   818,
+   1058,
+   128,
+   121
+  ],
+  "score": 0.715,
+  "contrast": 95.9
+ },
+ "p20_1.jpg": {
+  "watermark": true,
+  "box": [
+   818,
+   1058,
+   128,
+   121
+  ],
+  "score": 0.861,
+  "contrast": 63.0
+ }
+}
