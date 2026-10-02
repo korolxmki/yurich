@@ -56,6 +56,11 @@ def build():
                                   f"url({data_uri(fh.read(), 'font/woff2')})")
     css = fonts + '\n' + read('assets/css/style.css')
 
+    # картинки, на которые ссылается сам CSS (фон первого экрана и т.п.),
+    # тоже должны уехать внутрь файла — иначе в сборке они отвалятся
+    for rel in sorted(set(re.findall(r"url\('\.\./img/([^']+)'\)", css))):
+        css = css.replace(f"url('../img/{rel}')", f"url({as_webp('assets/img/' + rel)})")
+
     # ——— картинки ———
     assets, static = {}, {}
     for folder, files in (
