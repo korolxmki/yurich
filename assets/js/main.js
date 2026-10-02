@@ -55,7 +55,12 @@ document.addEventListener('click', e => {
   // пусть сменится хеш и роутер сам покажет нужный экран
   if (!target || target.closest('[hidden]')) return;
   e.preventDefault();
-  target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+  // липкая шапка всегда «в зоне видимости», прокрутка к ней ничего не делает —
+  // ссылка на неё означает «в самый верх страницы»
+  const pinned = ['sticky', 'fixed'].includes(getComputedStyle(target).position);
+  const behavior = reduceMotion ? 'auto' : 'smooth';
+  if (pinned) scrollTo({ top: 0, behavior });
+  else target.scrollIntoView({ behavior, block: 'start' });
   history.replaceState(null, '', '#' + id);
 });
 
