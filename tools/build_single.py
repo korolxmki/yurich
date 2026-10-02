@@ -74,7 +74,7 @@ def build():
         for name in sorted(os.listdir(os.path.join(ROOT, folder))):
             if name.endswith('.jpg'):
                 assets[f'{folder}/{name}'] = as_webp(f'{folder}/{name}')
-    for path in ('assets/img/yurich-cutout.png', 'assets/img/yurich-about.jpg'):
+    for path in ('assets/img/hero-composed.jpg', 'assets/img/yurich-about.jpg'):
         static[path] = as_webp(path)
     with open(os.path.join(ROOT, 'assets/img/favicon.svg'), 'rb') as fh:
         static['assets/img/favicon.svg'] = data_uri(fh.read(), 'image/svg+xml')
