@@ -30,6 +30,18 @@ WORKS = [
 
 PORTRAITS = [('yurich-about.jpg', 'photo_2026-07-30_12-36-67.jpg', 1200)]
 
+# Коллекции собираются из фотографий фабрики (photos_vardek_clean).
+# slug -> исходный файл. Названия и цены задаются в content/collections.js.
+COLLECTION_SRC = 'photos_vardek_clean'
+COLLECTION_PHOTOS = [
+    ('emal-1', 'p06_1.jpg'), ('emal-2', 'p01_1.jpg'), ('emal-3', 'p09_1.jpg'), ('emal-4', 'p05_1.jpg'),
+    ('derevo-1', 'p08_1.jpg'), ('derevo-2', 'p13_1.jpg'), ('derevo-3', 'p20_1.jpg'), ('derevo-4', 'p14_1.jpg'),
+    ('cvet-1', 'p04_1.jpg'), ('cvet-2', 'p02_1.jpg'), ('cvet-3', 'p03_1.jpg'), ('cvet-4', 'p07_1.jpg'),
+    ('grafit-1', 'p16_1.jpg'), ('grafit-2', 'p17_1.jpg'), ('grafit-3', 'p10_1.jpg'),
+    ('klassika-1', 'p11_1.jpg'), ('klassika-2', 'p12_1.jpg'),
+    ('glyanec-1', 'p18_1.jpg'), ('glyanec-2', 'p19_1.jpg'),
+]
+
 
 def save(im, path, width):
     im = ImageOps.exif_transpose(im).convert('RGB')
@@ -54,6 +66,13 @@ def main():
 
     for dst, src, width in PORTRAITS:
         print(dst, save(Image.open(os.path.join(SRC, src)), f'assets/img/{dst}', width))
+
+    os.makedirs('assets/img/collections/thumb', exist_ok=True)
+    for slug, src in COLLECTION_PHOTOS:
+        im = Image.open(os.path.join(COLLECTION_SRC, src))
+        w, h = save(im, f'assets/img/collections/{slug}.jpg', FULL)
+        save(im, f'assets/img/collections/thumb/{slug}.jpg', THUMB)
+        print(f'коллекции: {slug:12} {w}x{h}')
 
 
 if __name__ == '__main__':

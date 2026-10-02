@@ -6,6 +6,7 @@ const $  = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const cfg    = window.SITE   || {};
 const works  = window.WORKS  || [];
+const collections = window.COLLECTIONS || [];
 const posts  = window.POSTS  || [];
 const videos = window.VIDEOS || [];
 
@@ -155,12 +156,14 @@ function fadeInImages(root = document) {
 
 /* ——— портфолио ——— */
 const gallery = $('#gallery');
-let shown = works;
+let galleryItems = works;   // что сейчас в сетке работ
+let shown = works;          // что листает лайтбокс: работы или фото коллекции
 
 function renderGallery(filter) {
   if (!gallery) return;
-  shown = works.filter(w => w.category === filter);
-  gallery.innerHTML = shown.map((w, i) => `
+  galleryItems = works.filter(w => w.category === filter);
+  shown = galleryItems;
+  gallery.innerHTML = galleryItems.map((w, i) => `
     <figure class="work" data-index="${i}" style="animation-delay:${Math.min(i, 11) * 35}ms">
       <img src="${asset(`assets/img/works/thumb/${w.slug}.jpg`)}" alt="${esc(w.caption)}" loading="lazy" decoding="async">
       <figcaption>${esc(w.caption)}</figcaption>
@@ -177,8 +180,41 @@ $('#filters')?.addEventListener('click', e => {
 
 gallery?.addEventListener('click', e => {
   const fig = e.target.closest('.work');
-  if (fig) openLightbox(Number(fig.dataset.index));
+  if (!fig) return;
+  shown = galleryItems;      // вернуть лайтбоксу список работ после коллекции
+  openLightbox(Number(fig.dataset.index));
 });
+
+/* ——— коллекции ———
+   Карточка открывает лайтбокс с фотографиями своей линейки. */
+function renderCollections(root) {
+  if (!root || !collections.length) return;
+  root.innerHTML = collections.map(c => `
+    <button class="collection" type="button" data-collection="${esc(c.slug)}">
+      <div class="collection__img">
+        <img src="${asset(`assets/img/collections/thumb/${c.cover}.jpg`)}" alt="${esc(c.name)}" loading="lazy" decoding="async">
+        <span class="collection__count">${c.photos.length} фото</span>
+      </div>
+      <div class="collection__body">
+        <p class="collection__material">${esc(c.material)}</p>
+        <h3>${esc(c.name)}</h3>
+        <p class="collection__tagline">${esc(c.tagline)}</p>
+        <div class="collection__price"><span>от</span><b>${money(c.priceFrom)}</b><span>за метр</span></div>
+      </div>
+    </button>`).join('');
+
+  root.addEventListener('click', e => {
+    const card = e.target.closest('[data-collection]');
+    if (!card) return;
+    const c = collections.find(x => x.slug === card.dataset.collection);
+    if (!c) return;
+    shown = c.photos.map(slug => ({
+      src: asset(`assets/img/collections/${slug}.jpg`),
+      caption: `${c.name} — ${c.material}`,
+    }));
+    openLightbox(0);
+  });
+}
 
 /* ——— лайтбокс ——— */
 const lb = $('#lightbox'), lbImg = $('#lbImg'), lbCap = $('#lbCap');
@@ -188,7 +224,7 @@ function openLightbox(i) {
   if (!lb || !shown.length) return;
   lbIndex = (i + shown.length) % shown.length;
   const w = shown[lbIndex];
-  lbImg.src = asset(`assets/img/works/${w.slug}.jpg`);
+  lbImg.src = w.src || asset(`assets/img/works/${w.slug}.jpg`);
   lbImg.alt = w.caption;
   lbCap.textContent = w.caption;
   lb.classList.add('is-open');
@@ -415,6 +451,8 @@ const year = $('#year');
 if (year) year.textContent = String(new Date().getFullYear());
 
 // стартовая вкладка берётся из разметки — порядок фильтров меняется в HTML
+renderCollections($('#collections-grid'));
+renderCollections($('#collections-all'));
 renderGallery($('.filter.is-active')?.dataset.filter || works[0]?.category);
 renderVideos($('#videos'), 3);
 renderVideos($('#allVideos'));

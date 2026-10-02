@@ -12,7 +12,8 @@ from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DIST = os.path.join(ROOT, 'dist')
-WEBP_QUALITY = 78
+WEBP_QUALITY = 76
+MAX_SIDE = 1280      # внутри одного файла картинки крупнее не нужны
 
 
 def read(path):
@@ -27,6 +28,9 @@ def data_uri(raw, mime):
 def as_webp(path):
     """Перекодировать картинку в WebP и вернуть data-URI."""
     im = Image.open(os.path.join(ROOT, path))
+    if max(im.size) > MAX_SIDE:
+        k = MAX_SIDE / max(im.size)
+        im = im.resize((round(im.width * k), round(im.height * k)), Image.LANCZOS)
     buf = io.BytesIO()
     if im.mode in ('RGBA', 'LA', 'P'):
         im.convert('RGBA').save(buf, 'WEBP', quality=WEBP_QUALITY, method=6)
@@ -42,6 +46,7 @@ def inner_main(html):
 
 def build():
     index, blog, post = read('index.html'), read('blog.html'), read('post.html')
+    collections = read('collections.html')
 
     # ——— стили: шрифты превращаем в data-URI прямо внутри @font-face ———
     fonts = read('assets/css/fonts.css')
@@ -60,6 +65,10 @@ def build():
         for name in sorted(os.listdir(os.path.join(ROOT, folder))):
             if name.endswith('.jpg'):
                 assets[f'{folder}/{name}'] = as_webp(f'{folder}/{name}')
+    for folder in ('assets/img/collections', 'assets/img/collections/thumb'):
+        for name in sorted(os.listdir(os.path.join(ROOT, folder))):
+            if name.endswith('.jpg'):
+                assets[f'{folder}/{name}'] = as_webp(f'{folder}/{name}')
     for path in ('assets/img/yurich-cutout.png', 'assets/img/yurich-about.jpg'):
         static[path] = as_webp(path)
     with open(os.path.join(ROOT, 'assets/img/favicon.svg'), 'rb') as fh:
@@ -69,6 +78,10 @@ def build():
     home = inner_main(index)
     blog_view = inner_main(blog)
     post_view = inner_main(post)
+    coll_view = inner_main(collections)
+
+    # id="collections" есть и на главной, и у секции-обёртки страницы коллекций
+    coll_view = coll_view.replace('id="collections-all"', 'id="collections-all"')
 
     # id="video" есть и на главной, и в блоге — в одном документе это конфликт
     blog_view = blog_view.replace('id="video"', 'id="blog-video"')
@@ -81,14 +94,15 @@ def build():
         html = html.replace('href="./#', 'href="#')
         html = html.replace('href="blog.html#video"', 'href="#/blog"')
         html = html.replace('href="blog.html"', 'href="#/blog"')
+        html = html.replace('href="collections.html"', 'href="#/collections"')
         html = html.replace('href="./"', 'href="#/"')
         return html
 
     header, tail = fix_links(header), fix_links(tail)
-    home, blog_view, post_view = map(fix_links, (home, blog_view, post_view))
+    home, blog_view, post_view, coll_view = map(fix_links, (home, blog_view, post_view, coll_view))
 
     # ——— скрипты ———
-    scripts = '\n'.join(read(f'content/{n}.js') for n in ('config', 'works', 'posts', 'videos'))
+    scripts = '\n'.join(read(f'content/{n}.js') for n in ('config', 'collections', 'works', 'posts', 'videos'))
     scripts += '\nwindow.ASSETS = ' + json.dumps(assets) + ';\n'
     scripts += read('assets/js/post.js') + '\n' + read('assets/js/main.js')
 
@@ -99,7 +113,8 @@ def build():
   'use strict';
   const views = { home: document.getElementById('view-home'),
                   blog: document.getElementById('view-blog'),
-                  post: document.getElementById('view-post') };
+                  post: document.getElementById('view-post'),
+                  collections: document.getElementById('view-collections') };
   let current = null;
 
   function show(name) {
@@ -125,6 +140,10 @@ def build():
     }
     if (hash.startsWith('#/blog')) {
       if (show('blog')) scrollTo(0, 0);
+      return;
+    }
+    if (hash.startsWith('#/collections')) {
+      if (show('collections')) scrollTo(0, 0);
       return;
     }
 
@@ -154,7 +173,7 @@ def build():
 <style>
 {css}
 </style>
-<noscript><style>.reveal,.stagger>*{{opacity:1!important;transform:none!important}}.hero__title span,.hero__sub,.hero__cta,.hero__facts,.hero__photo,.hero__blob,.hero__badge,.work img{{opacity:1!important;animation:none!important}}#view-blog,#view-post{{display:none}}</style></noscript>
+<noscript><style>.reveal,.stagger>*{{opacity:1!important;transform:none!important}}.hero__title span,.hero__sub,.hero__cta,.hero__facts,.hero__photo,.hero__blob,.hero__badge,.work img{{opacity:1!important;animation:none!important}}#view-blog,#view-post,#view-collections{{display:none}}</style></noscript>
 </head>
 <body>
 {header}
@@ -162,6 +181,7 @@ def build():
   <div id="view-home">{home}</div>
   <div id="view-blog" hidden>{blog_view}</div>
   <div id="view-post" hidden>{post_view}</div>
+  <div id="view-collections" hidden>{coll_view}</div>
 </main>
 {tail}
 <script>

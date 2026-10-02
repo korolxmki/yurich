@@ -271,6 +271,33 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
   opacity:0;transform:translateY(8px);transition:.35s var(--ease);
 }
 .work:hover figcaption,.work:focus-within figcaption{opacity:1;transform:none}
+/* ——— коллекции ——— */
+.collections{display:grid;gap:clamp(14px,1.8vw,22px);grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr))}
+.collection{
+  display:flex;flex-direction:column;text-align:left;padding:0;border:1px solid var(--line);
+  border-radius:var(--r-lg);overflow:hidden;background:#fff;cursor:pointer;font:inherit;color:inherit;
+  transition:transform .35s var(--ease),box-shadow .35s var(--ease);
+}
+.collection:hover{transform:translateY(-5px);box-shadow:var(--shadow)}
+.collection__img{position:relative;aspect-ratio:4/3;background:var(--sand);overflow:hidden}
+.collection__img img{width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease)}
+.collection:hover .collection__img img{transform:scale(1.05)}
+.collection__count{
+  position:absolute;right:12px;bottom:12px;padding:6px 12px;border-radius:999px;
+  background:rgba(12,16,14,.62);backdrop-filter:blur(6px);color:#fff;font-size:12.5px;font-weight:600;
+}
+.collection__body{padding:22px clamp(20px,2.2vw,26px) 24px;display:flex;flex-direction:column;gap:9px;flex:1}
+.collection__body h3{font-size:22px}
+.collection__tagline{margin:0;font-size:15px;color:var(--muted);flex:1}
+.collection__material{
+  margin:0;font-size:12.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--green-dark);
+}
+.collection__price{
+  display:flex;align-items:baseline;gap:7px;margin-top:4px;padding-top:14px;
+  border-top:1px solid var(--line);font-size:14px;color:var(--muted);
+}
+.collection__price b{font-family:var(--serif);font-size:23px;color:var(--ink)}
+
 /* ——— этапы ——— */
 .steps{display:grid;gap:clamp(14px,1.8vw,20px);grid-template-columns:repeat(auto-fit,minmax(215px,1fr));counter-reset:s}
 .step{position:relative;padding:30px 24px;border-radius:var(--r-lg);background:#fff;border:1px solid var(--line)}

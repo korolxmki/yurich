@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Блог — Юрич Мебель</title>
-<meta name="description" content="Статьи и видео о кухнях на заказ: материалы фасадов, планировки, столешницы и ошибки при заказе.">
-<meta property="og:title" content="Блог — Юрич Мебель">
-<meta property="og:description" content="Статьи и видео о кухнях на заказ: материалы фасадов, планировки, столешницы и ошибки при заказе.">
+<title>Коллекции кухонь — Юрич Мебель</title>
+<meta name="description" content="Коллекции кухонь на заказ: матовая эмаль, дерево и камень, глубокий цвет, графит, классика, глянец. Цены за метр и фотографии.">
+<meta property="og:title" content="Коллекции кухонь — Юрич Мебель">
+<meta property="og:description" content="Коллекции кухонь на заказ: матовая эмаль, дерево и камень, глубокий цвет, графит, классика, глянец. Цены за метр и фотографии.">
 <meta property="og:type" content="website">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/css/fonts.css">
@@ -27,9 +27,9 @@
 
     <nav class="nav" id="nav">
       <a href="./">Главная</a>
-      <a href="collections.html">Коллекции</a>
+      <a href="collections.html" class="is-active">Коллекции</a>
       <a href="./#portfolio">Работы</a>
-      <a href="blog.html" class="is-active">Блог</a>
+      <a href="blog.html">Блог</a>
       <a href="./#contacts">Контакты</a>
     </nav>
 
@@ -47,32 +47,32 @@
 
 <section class="section">
   <div class="wrap">
-    <nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="./">Главная</a> <span>/</span> <span>Блог</span></nav>
+    <nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="./">Главная</a> <span>/</span> <span>Коллекции</span></nav>
     <div class="section-head">
       <div class="section-head__text">
-        <p class="eyebrow">Блог</p>
-        <h1 class="display">Разбираемся в мебели</h1>
-        <p class="lead">Практические статьи о материалах, планировках и подводных камнях — из опыта мастерской, а не из брошюр производителей.</p>
+        <p class="eyebrow">Коллекции</p>
+        <h1 class="display">Что можно заказать</h1>
+        <p class="lead">Линейки отличаются материалом фасада и характером. Размеры в любой из них
+          считаем под вашу комнату — готовых габаритов не бывает. Нажмите на коллекцию,
+          чтобы посмотреть её вблизи.</p>
       </div>
     </div>
-    <div class="posts stagger" id="allPosts"></div>
+    <div class="collections stagger" id="collections-all"></div>
   </div>
 </section>
 
-<section class="section section--mint" id="video">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="section-head__text">
-        <p class="eyebrow">Видео</p>
-        <h2 class="display">Как это делается</h2>
-        <p class="lead">Производство, монтаж и разбор готовых кухонь изнутри.</p>
-      </div>
-    </div>
-    <div class="videos stagger" id="allVideos"></div>
+<section class="section section--tint">
+  <div class="wrap" style="text-align:center">
+    <h2 class="display">Не выбрали?</h2>
+    <p class="lead" style="margin:16px auto 28px">Привезём образцы всех материалов на замер — цвет на экране и цвет в руках это разные вещи.</p>
+    <a class="btn" href="./#calc">Заказать расчёт
+      <svg class="btn__arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
   </div>
 </section>
 
 </main>
+
 <!-- ПОДВАЛ -->
 <footer class="footer">
   <div class="wrap">
@@ -93,8 +93,7 @@
         </div>
       </div>
       <div><h4>Разделы</h4><ul>
-        <li><a href="collections.html">Коллекции</a>
-      <a href="./#portfolio">Работы</a></li><li><a href="./#steps">Как мы работаем</a></li>
+        <li><a href="./#portfolio">Работы</a></li><li><a href="./#steps">Как мы работаем</a></li>
         <li><a href="./#calc">Заказать расчёт</a></li><li><a href="./#about">О мастерской</a></li>
       </ul></div>
       <div><h4>Блог</h4><ul id="footerPosts"></ul></div>
@@ -110,6 +109,14 @@
     </div>
   </div>
 </footer>
+
+<!-- ЛАЙТБОКС -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Просмотр фотографии">
+  <button class="lightbox__btn lightbox__close" id="lbClose" aria-label="Закрыть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 6 12 12M18 6 6 18" stroke-linecap="round"/></svg></button>
+  <button class="lightbox__btn lightbox__prev" id="lbPrev" aria-label="Предыдущая"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m14 5-7 7 7 7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <button class="lightbox__btn lightbox__next" id="lbNext" aria-label="Следующая"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m10 5 7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <div><img id="lbImg" alt=""><p class="lightbox__cap" id="lbCap"></p></div>
+</div>
 
 <script src="content/config.js"></script>
 <script src="content/collections.js"></script>
