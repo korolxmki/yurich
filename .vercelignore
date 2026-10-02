@@ -1,0 +1,20 @@
+# На сайт выкладывается только то, что нужно браузеру.
+# Исходники фотографий, скрипты сборки и проверки — мимо.
+photos/
+photos_clean/
+photos_vardek/
+photos_vardek_clean/
+tools/
+node_modules/
+*.py
+*.md
+.scrolltest.js
+.mobtest.js
+.nettest.js
+.failtest.js
+.nojs.js
+.over.js
+.floor.js
+.probe.js
+.bisect.js
+.regress.js

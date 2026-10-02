@@ -12,8 +12,9 @@ from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DIST = os.path.join(ROOT, 'dist')
-WEBP_QUALITY = 76
-MAX_SIDE = 1280      # внутри одного файла картинки крупнее не нужны
+WEBP_QUALITY = 72
+MAX_SIDE = 1100      # внутри одного файла картинки крупнее не нужны
+SINGLE_NAME = 'odnim-failom.html'   # версия «весь сайт в одном файле»
 
 
 def read(path):
@@ -178,7 +179,21 @@ def build():
 <style>
 {css}
 </style>
-<noscript><style>.reveal,.stagger>*{{opacity:1!important;transform:none!important}}.hero__title span,.hero__sub,.hero__cta,.hero__facts,.hero__photo,.hero__blob,.hero__badge,.work img{{opacity:1!important;animation:none!important}}#view-blog,#view-post,#view-collections{{display:none}}</style></noscript>
+<noscript><style>#view-blog,#view-post,#view-collections{{display:none}}</style></noscript>
+<script>
+/* Сторож анимаций. В одном файле скрипт идёт последним и на мобильном
+   интернете доезжает секунд через десять — всё это время страница не должна
+   стоять пустой. Нет флага через 2,5 с — снимаем .anim, и контент виден. */
+(function (d) {{
+  d.classList.add('anim');
+  var off = function () {{ d.classList.remove('anim'); }};
+  addEventListener('error', function (e) {{
+    var t = e.target;
+    if (t === window || (t && t.tagName === 'SCRIPT')) off();
+  }}, true);
+  setTimeout(function () {{ if (!window.__revealReady) off(); }}, 2500);
+}})(document.documentElement);
+</script>
 </head>
 <body>
 {header}
@@ -203,13 +218,13 @@ def build():
         page = page.replace(f'content="{path}"', f'content="{uri}"')
 
     os.makedirs(DIST, exist_ok=True)
-    out = os.path.join(DIST, 'index.html')
+    out = os.path.join(DIST, SINGLE_NAME)
     with open(out, 'w', encoding='utf-8') as fh:
         fh.write(page)
 
     left = re.findall(r'(?:src|href)="(assets/[^"]+)"', page)
     size = os.path.getsize(out) / 1024 / 1024
-    print(f'dist/index.html — {size:.1f} МБ, картинок внутри {len(assets) + len(static)}')
+    print(f'dist/{SINGLE_NAME} — {size:.1f} МБ, картинок внутри {len(assets) + len(static)}')
     if left:
         print('ВНИМАНИЕ, остались внешние ссылки:', sorted(set(left)))
     return out

@@ -84,6 +84,9 @@ const reveal = () => {
   // детям групп раздаём порядковый номер — из него CSS считает задержку
   $$('.stagger').forEach(g => [...g.children].forEach((el, i) => el.style.setProperty('--i', i)));
 
+  // сторож в <head> ждёт этот флаг: он значит, что скрипт дошёл до анимаций
+  window.__revealReady = true;
+
   const items = $$('.reveal:not(.is-in), .stagger:not(.is-in)');
   if (!('IntersectionObserver' in window)) return items.forEach(el => el.classList.add('is-in'));
   const io = new IntersectionObserver((entries, obs) => {
@@ -455,13 +458,20 @@ function say(el, msg, isError) { el.style.color = isError ? '#C0392B' : ''; el.t
 const year = $('#year');
 if (year) year.textContent = String(new Date().getFullYear());
 
+// Запускаем по шагам и порознь: если один блок споткнётся на кривых данных,
+// остальные всё равно отрисуются, а reveal() снимет невидимость с контента.
+// Раньше одна ошибка здесь гасила всё, что ниже первого экрана.
 // стартовая вкладка берётся из разметки — порядок фильтров меняется в HTML
-renderCollections($('#collections-grid'));
-renderCollections($('#collections-all'));
-renderGallery($('.filter.is-active')?.dataset.filter || works[0]?.category);
-renderVideos($('#videos'), 3);
-renderVideos($('#allVideos'));
-reveal();
-initCounters();
-initParallax();
+[
+  () => renderCollections($('#collections-grid')),
+  () => renderCollections($('#collections-all')),
+  () => renderGallery($('.filter.is-active')?.dataset.filter || works[0]?.category),
+  () => renderVideos($('#videos'), 3),
+  () => renderVideos($('#allVideos')),
+  reveal,
+  initCounters,
+  initParallax,
+].forEach(step => {
+  try { step(); } catch (e) { console.error('Шаг инициализации упал:', e); }
+});
 })();

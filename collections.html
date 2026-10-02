@@ -9,9 +9,23 @@
 <meta property="og:description" content="Коллекции кухонь на заказ: матовая эмаль, дерево и камень, глубокий цвет, графит, классика, глянец. Цены за метр и фотографии.">
 <meta property="og:type" content="website">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<script>
+/* Сторож анимаций. Прятать контент до прокрутки можно только тогда, когда
+   скрипт сайта точно работает. Класс снимаем, если скрипт упал или не успел
+   за 2,5 с — тогда страница просто показывает всё сразу, без анимаций.
+   Без этого любая осечка в JS оставляла от сайта один первый экран. */
+(function (d) {
+  d.classList.add('anim');
+  var off = function () { d.classList.remove('anim'); };
+  addEventListener('error', function (e) {
+    var t = e.target;
+    if (t === window || (t && t.tagName === 'SCRIPT')) off();
+  }, true);
+  setTimeout(function () { if (!window.__revealReady) off(); }, 2500);
+})(document.documentElement);
+</script>
 <link rel="stylesheet" href="assets/css/fonts.css">
 <link rel="stylesheet" href="assets/css/style.css">
-<noscript><style>.reveal,.stagger>*{opacity:1!important;transform:none!important}.hero__title span,.hero__sub,.hero__cta,.hero__facts,.hero__photo,.hero__blob,.hero__badge,.work img{opacity:1!important;animation:none!important}</style></noscript>
 </head>
 <body>
 <!-- ШАПКА -->
