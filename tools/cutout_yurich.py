@@ -1,21 +1,16 @@
 #!/usr/bin/env python3
-"""Вырезать Юрича с чёрного фона для первого экрана.
+"""Вырезать Юрича с фона для первого экрана.
 
-Исходник — портрет, который заказчик смонтировал сам. Лицо трогать нельзя,
-поэтому никакой генерации: только альфа-канал и кромка.
+Исходник — портрет на ровном светлом фоне, обрезанный заказчиком. Лицо
+трогать нельзя, поэтому никакой генерации: работаем только с альфа-каналом.
 
-Три вещи, которые делает скрипт:
+Главное здесь — матирование (rembg + pymatting). У края пиксели наполовину
+фон, наполовину он, и просто выбить фон по цвету нельзя: на светлом фоне
+сайта остаётся грязная кайма. Матирование оценивает, какой у пикселя
+истинный цвет и какая доля фона, и снимает подмес.
 
-1. Матирование (rembg + pymatting). Фон чёрный, и у края пиксели подмешаны
-   к нему: если просто выбить чёрный, на светлом фоне останется тёмный ореол.
-   Матирование оценивает истинный цвет пикселя у края и снимает подмес.
-
-2. Чистка следов монтажа. По правому краю остались две вещи: светлая рваная
-   кромка вдоль тёмного предплечья и полупрозрачная серая «ножка» ниже локтя.
-   Ни то, ни другое — не он.
-
-3. Нижний срез уводим в прозрачность. Иначе ровная линия обрыва, да ещё с
-   тенью от CSS, читается как ошибка вёрстки.
+Нижний срез уводим в прозрачность: там он обрезан кадром, и ровная линия
+обрыва, да ещё с тенью от CSS, читается как ошибка вёрстки.
 
     python3 tools/cutout_yurich.py
 """
@@ -26,66 +21,52 @@ from PIL import Image
 from rembg import new_session, remove
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC = os.path.join(ROOT, 'photos', 'yurich-portret-montazh.jpg')
+SRC = os.path.join(ROOT, 'photos', 'yurich-portret.webp')
 DST = os.path.join(ROOT, 'assets', 'img', 'yurich-cutout.webp')
 
-# зона правого края, где остались следы монтажа: там только кожа и ткань,
-# ни волос, ни бахромы, поэтому кромку можно править жёстко
-SLED = (slice(950, 1075), slice(640, 848))   # светлая рваная кромка
-NOGA_Y = 985                                  # ниже — полупрозрачная серая полоса
-FADE = 58                                     # на столько пикселей растворяем низ
+FADE = 70        # на столько пикселей растворяем нижний срез
+POLYA = 6        # прозрачные поля, чтобы силуэт не упирался в край кадра
+MUSOR = 400      # куски мельче — мусор, а не он
 
 
 def main():
     im = Image.open(SRC).convert('RGB')
     ses = new_session('isnet-general-use')
 
-    # 1. силуэт с оценкой истинного цвета у края
     cut = remove(im, session=ses, alpha_matting=True,
                  alpha_matting_foreground_threshold=250,
                  alpha_matting_background_threshold=8,
                  alpha_matting_erode_size=12)
     arr = np.asarray(cut).astype(np.float32)
     rgb, alpha = arr[..., :3] / 255.0, arr[..., 3] / 255.0
-    h, w = alpha.shape
 
-    # 2а. светлая кромка вдоль тёмного края: сравниваем яркость пикселя с
-    #     яркостью «мякоти» рядом — опору берём размытием глубоко внутри силуэта
-    lum = rgb.max(axis=2)
-    inner = cv2.erode((alpha > 0.95).astype(np.uint8), np.ones((9, 9), np.uint8))
-    ref = cv2.inpaint((lum * 255).astype(np.uint8), 1 - inner, 11, cv2.INPAINT_TELEA)
-    ref = cv2.GaussianBlur(ref.astype(np.float32) / 255.0, (0, 0), 4)
-
-    ys, xs = SLED
-    # яркое там, где вокруг темно, — это чужое: либо полупрозрачная кромка,
-    # либо совсем непрозрачные крапины, оставшиеся от монтажа
-    svetlo = lum[ys, xs] > ref[ys, xs] + 0.14
-    kraj = svetlo & ((alpha[ys, xs] < 0.995) | (ref[ys, xs] < 0.35))
-    sub = alpha[ys, xs]
-    sub[kraj] = 0.0
-    # после вырезания точек край рваный — приглаживаем его медианой
-    sub = cv2.medianBlur((sub * 255).astype(np.uint8), 5).astype(np.float32) / 255.0
-    alpha[ys, xs] = cv2.GaussianBlur(sub, (0, 0), 0.8)
-    print(f'светлая кромка: убрано {int(kraj.sum())} пикселей')
-
-    # 2б. ниже локтя одна ткань: полупрозрачную кромку убираем целиком
-    low = alpha[NOGA_Y:].copy()
-    low = np.where(low < 0.88, 0.0, low)
-    alpha[NOGA_Y:] = cv2.GaussianBlur(low, (0, 0), 0.8)
-
-    # 2в. отдельные ошмётки
-    m = (alpha > 0.5).astype(np.uint8)
-    n, lab, stats, _ = cv2.connectedComponentsWithStats(m, 8)
+    # отдельные ошмётки фона, которые сетка приняла за него
+    n, lab, stats, _ = cv2.connectedComponentsWithStats((alpha > 0.5).astype(np.uint8), 8)
     if n > 2:
         keep = 1 + int(np.argmax(stats[1:, cv2.CC_STAT_AREA]))
         drop = (lab != keep) & (lab != 0)
         alpha[drop] = 0
         print(f'отдельных кусков: {n - 2}, убрано {int(drop.sum())} пикселей')
 
-    # 3. растворяем низ
+    # Обрезаем прозрачную пустоту по бокам. Она на экране не видна, но входит
+    # в размер картинки, а значит уменьшает его в колонке первого экрана:
+    # с полями он выходил на четверть мельче и сползал вниз.
+    ys, xs = np.where(alpha > 0.02)
+    y0, y1, x0, x1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
+    print(f'обрезано пустоты: слева {x0}, справа {alpha.shape[1] - x1}, '
+          f'сверху {y0}, снизу {alpha.shape[0] - y1}')
+    rgb, alpha = rgb[y0:y1, x0:x1], alpha[y0:y1, x0:x1]
+
+    # поля по краям: силуэт упирается в срез кадра, а тень от CSS по упёртому
+    # краю даёт резкую линию
+    rgb = np.pad(rgb, ((POLYA, POLYA), (POLYA, POLYA), (0, 0)), mode='edge')
+    alpha = np.pad(alpha, ((POLYA, POLYA), (POLYA, POLYA)))
+    h, w = alpha.shape
+
+    # растворяем низ
     fade = np.ones(h, np.float32)
-    fade[h - FADE:h - 4] = np.linspace(1, 0.06, FADE - 4)
-    fade[h - 4:] = 0.0
+    fade[h - FADE:h - POLYA] = np.linspace(1, 0.05, FADE - POLYA)
+    fade[h - POLYA:] = 0.0
     alpha *= fade[:, None]
 
     out = np.dstack([rgb * 255, np.clip(alpha, 0, 1)[..., None] * 255]).astype(np.uint8)
