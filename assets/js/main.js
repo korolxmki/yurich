@@ -255,13 +255,26 @@ addEventListener('keydown', e => {
 
 /* ——— видео ——— */
 function videoCard(v) {
+  // ролик бывает двух видов: свой файл (v.file) и чужой проигрыватель
+  // (v.embed — YouTube, VK, Instagram). Вертикальные рилсы просим 9/16.
+  const ratio = v.ratio || '16/9';
   const cover = v.cover ? `<img class="video__cover" src="${esc(asset(v.cover))}" alt="" loading="lazy">` : '';
-  return `<div class="video" data-embed="${esc(v.embed)}">
+  const title = v.title ? `<div class="video__title">${esc(v.title)}</div>` : '';
+
+  // свой файл без обложки показываем сразу проигрывателем: браузер сам
+  // возьмёт первый кадр, иначе на месте ролика чёрный прямоугольник
+  if (v.file && !v.cover) {
+    return `<div class="video" style="aspect-ratio:${esc(ratio)}">
+      <video class="video__player" src="${esc(asset(v.file))}" controls playsinline
+             preload="metadata"></video>${title}</div>`;
+  }
+  const src = v.file ? ` data-file="${esc(asset(v.file))}"` : ` data-embed="${esc(v.embed)}"`;
+  return `<div class="video" style="aspect-ratio:${esc(ratio)}"${src}>
     ${cover}
-    <button class="video__play" type="button" aria-label="Смотреть: ${esc(v.title)}">
+    <button class="video__play" type="button" aria-label="Смотреть: ${esc(v.title || 'видео')}">
       <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5-13-7.5Z"/></svg>
     </button>
-    <div class="video__title">${esc(v.title)}</div>
+    ${title}
   </div>`;
 }
 const emptyVideo = note => `<div class="video video--empty">
@@ -273,19 +286,29 @@ const emptyVideo = note => `<div class="video video--empty">
 function renderVideos(root, limit) {
   if (!root) return;
   const list = limit ? videos.slice(0, limit) : videos;
+
+  // один ролик не растягиваем на всю ширину — ставим по центру и ограничиваем
+  const one = list.length <= 1;
+  root.classList.toggle('videos--one', one);
+  if (one) {
+    const vert = (list[0]?.ratio || '').startsWith('9');
+    root.style.setProperty('--one-w', vert ? '400px' : '860px');
+  } else {
+    root.style.removeProperty('--one-w');
+  }
+
   if (!list.length) {
-    root.innerHTML = [
-      emptyVideo('Здесь появится видео с производства — добавьте ссылку в <b>content/videos.js</b>'),
-      emptyVideo('Место под ролик о монтаже кухни'),
-      emptyVideo('Место под обзор готового проекта'),
-    ].join('');
+    root.innerHTML = emptyVideo('Здесь появится ролик с производства — добавьте его в <b>content/videos.js</b>');
     return;
   }
   root.innerHTML = list.map(videoCard).join('');
+
   $$('.video__play', root).forEach(btn => btn.addEventListener('click', () => {
     const box = btn.closest('.video');
-    box.innerHTML = `<iframe src="${box.dataset.embed}${box.dataset.embed.includes('?') ? '&' : '?'}autoplay=1"
-      title="Видео" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>`;
+    box.innerHTML = box.dataset.file
+      ? `<video class="video__player" src="${box.dataset.file}" controls playsinline autoplay></video>`
+      : `<iframe src="${box.dataset.embed}${box.dataset.embed.includes('?') ? '&' : '?'}autoplay=1"
+           title="Видео" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>`;
   }));
 }
 
