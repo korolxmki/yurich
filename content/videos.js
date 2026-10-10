@@ -13,4 +13,10 @@
 
    ratio — пропорции: '9/16' для вертикальных рилсов, '16/9' для обычных.
    cover — обложка; без неё свой файл покажет первый кадр сам.            */
-window.VIDEOS = [];
+window.VIDEOS = [
+  {
+    // последний рилс из Instagram @urich_mebel
+    embed: 'https://www.instagram.com/reel/DeHVq09t2tm/embed/',
+    title: '',
+  },
+];

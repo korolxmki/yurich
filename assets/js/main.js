@@ -254,17 +254,30 @@ addEventListener('keydown', e => {
 });
 
 /* ——— видео ——— */
+/* Instagram показывает ролик в своём окне, и оно живёт по своим правилам:
+   медиа занимает 125% ширины (их портрет 4:5, вертикальный рилс внутри него
+   идёт с чёрными полями), а шапка с лайками и полем комментария — ровно
+   208 пикселей при любой ширине. Замерено от 300 до 600 px, сходится точно.
+   Поэтому высоту считаем формулой, а не пропорцией: с фиксированной
+   пропорцией либо обрежет низ, либо останется пустая полоса. */
+const IG_MEDIA = 125, IG_CHROME = 208;
+const isInstagram = url => /\/\/(www\.)?instagram\.com\//.test(url || '');
+
 function videoCard(v) {
   // ролик бывает двух видов: свой файл (v.file) и чужой проигрыватель
   // (v.embed — YouTube, VK, Instagram). Вертикальные рилсы просим 9/16.
   const ratio = v.ratio || '16/9';
+  const ig = isInstagram(v.embed);
+  const box = ig
+    ? `class="video video--pad" style="padding-top:calc(${IG_MEDIA}% + ${IG_CHROME}px)"`
+    : `class="video" style="aspect-ratio:${esc(ratio)}"`;
   const cover = v.cover ? `<img class="video__cover" src="${esc(asset(v.cover))}" alt="" loading="lazy">` : '';
   const title = v.title ? `<div class="video__title">${esc(v.title)}</div>` : '';
 
   // свой файл без обложки показываем сразу проигрывателем: браузер сам
   // возьмёт первый кадр, иначе на месте ролика чёрный прямоугольник
   if (v.file && !v.cover) {
-    return `<div class="video" style="aspect-ratio:${esc(ratio)}">
+    return `<div ${box}>
       <video class="video__player" src="${esc(asset(v.file))}" controls playsinline
              preload="metadata"></video>${title}</div>`;
   }
@@ -272,13 +285,13 @@ function videoCard(v) {
   // чёрный прямоугольник с кнопкой, по которому не понять, что за видео.
   // loading=lazy — чтобы он не грузился, пока до блока не долистают
   if (v.embed && !v.cover) {
-    return `<div class="video" style="aspect-ratio:${esc(ratio)}">
+    return `<div ${box}>
       <iframe src="${esc(v.embed)}" title="${esc(v.title || 'Видео')}" loading="lazy"
               allow="encrypted-media; picture-in-picture" allowfullscreen
               scrolling="no"></iframe>${title}</div>`;
   }
   const src = v.file ? ` data-file="${esc(asset(v.file))}"` : ` data-embed="${esc(v.embed)}"`;
-  return `<div class="video" style="aspect-ratio:${esc(ratio)}"${src}>
+  return `<div ${box}${src}>
     ${cover}
     <button class="video__play" type="button" aria-label="Смотреть: ${esc(v.title || 'видео')}">
       <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5-13-7.5Z"/></svg>
@@ -300,8 +313,10 @@ function renderVideos(root, limit) {
   const one = list.length <= 1;
   root.classList.toggle('videos--one', one);
   if (one) {
-    const vert = (list[0]?.ratio || '').startsWith('9');
-    root.style.setProperty('--one-w', vert ? '400px' : '860px');
+    const v = list[0];
+    const vert = (v?.ratio || '').startsWith('9');
+    // окно Instagram вчетверо выше своей ширины, поэтому держим его уже
+    root.style.setProperty('--one-w', isInstagram(v?.embed) ? '480px' : vert ? '400px' : '860px');
   } else {
     root.style.removeProperty('--one-w');
   }
