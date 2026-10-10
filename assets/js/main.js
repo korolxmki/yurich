@@ -268,6 +268,15 @@ function videoCard(v) {
       <video class="video__player" src="${esc(asset(v.file))}" controls playsinline
              preload="metadata"></video>${title}</div>`;
   }
+  // чужой проигрыватель без обложки вставляем сразу: иначе на месте ролика
+  // чёрный прямоугольник с кнопкой, по которому не понять, что за видео.
+  // loading=lazy — чтобы он не грузился, пока до блока не долистают
+  if (v.embed && !v.cover) {
+    return `<div class="video" style="aspect-ratio:${esc(ratio)}">
+      <iframe src="${esc(v.embed)}" title="${esc(v.title || 'Видео')}" loading="lazy"
+              allow="encrypted-media; picture-in-picture" allowfullscreen
+              scrolling="no"></iframe>${title}</div>`;
+  }
   const src = v.file ? ` data-file="${esc(asset(v.file))}"` : ` data-embed="${esc(v.embed)}"`;
   return `<div class="video" style="aspect-ratio:${esc(ratio)}"${src}>
     ${cover}
