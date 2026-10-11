@@ -28,7 +28,7 @@ WORKS = [
  ('kuhnya-zelenaya-derevo',   'photo_6_2026-09-27_12-48-15.jpg',  'tsvetnye', 'Тёмно-зелёная кухня с деревянной столешницей'),
 ]
 
-PORTRAITS = [('yurich-about.jpg', 'photo_2026-07-30_12-36-67.jpg', 1200)]
+PORTRAITS = [('yurich-hero.jpg', 'photo_2026-07-30_12-36-67.jpg', 1200)]
 
 # Коллекции собираются из фотографий фабрики (photos_vardek_clean).
 # slug -> исходный файл. Названия и цены задаются в content/collections.js.

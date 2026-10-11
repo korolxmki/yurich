@@ -75,7 +75,7 @@ def build():
         for name in sorted(os.listdir(os.path.join(ROOT, folder))):
             if name.endswith('.jpg'):
                 assets[f'{folder}/{name}'] = as_webp(f'{folder}/{name}')
-    for path in ('assets/img/yurich-cutout.webp', 'assets/img/yurich-about.jpg'):
+    for path in ('assets/img/yurich-hero.jpg',):
         static[path] = as_webp(path)
     with open(os.path.join(ROOT, 'assets/img/favicon.svg'), 'rb') as fh:
         static['assets/img/favicon.svg'] = data_uri(fh.read(), 'image/svg+xml')
@@ -216,6 +216,19 @@ def build():
     for path, uri in static.items():
         page = page.replace(f'src="{path}"', f'src="{uri}"')
         page = page.replace(f'content="{path}"', f'content="{uri}"')
+
+    # Всё, что осталось ссылкой на файл, втягиваем автоматически. Иначе любая
+    # новая картинка в разметке превращается в битую: в одном файле папок нет,
+    # а узнаёшь об этом, только открыв сборку.
+    for path in sorted(set(re.findall(r'(?:src|content)="(assets/[^"]+\.(?:jpg|jpeg|png|webp|svg))"', page))):
+        if not os.path.exists(os.path.join(ROOT, path)):
+            continue
+        uri = as_webp(path) if not path.endswith('.svg') else data_uri(
+            open(os.path.join(ROOT, path), 'rb').read(), 'image/svg+xml')
+        page = page.replace(f'src="{path}"', f'src="{uri}"')
+        page = page.replace(f'content="{path}"', f'content="{uri}"')
+        static[path] = uri
+        print(f'  подобрана картинка из разметки: {path}')
 
     os.makedirs(DIST, exist_ok=True)
     out = os.path.join(DIST, SINGLE_NAME)
