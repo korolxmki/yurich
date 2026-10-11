@@ -257,8 +257,13 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
 .hero__title span{display:block}
 .hero__sub{font-size:clamp(17px,1.9vw,20px);color:var(--ink-2);max-width:44ch;margin:0 0 34px}
 .hero__cta{display:flex;flex-wrap:wrap;gap:13px;margin-bottom:clamp(30px,4.5vw,46px)}
-.hero__facts{display:flex;flex-wrap:wrap;gap:clamp(22px,4vw,48px);padding-bottom:clamp(36px,5vw,56px)}
-.fact__num{font-family:var(--serif);font-size:clamp(30px,3.8vw,42px);line-height:1;color:var(--green)}
+/* Три цифры держим тремя колонками, а не переносом по флексу: при переносе
+   третья уезжала на свою строку и рядом оставалась дыра. В колонке переносится
+   подпись, а сама цифра остаётся на месте. */
+.hero__facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(14px,2.6vw,44px);padding-bottom:clamp(36px,5vw,56px)}
+.fact__num{font-family:var(--serif);font-size:clamp(30px,3.8vw,42px);line-height:1;color:var(--green);white-space:nowrap}
+/* в трети узкого экрана «30 дней» 30-м кеглем уже не помещается */
+@media (max-width:560px){.fact__num{font-size:clamp(21px,5.6vw,30px)}.fact__label{font-size:12px}}
 .fact__label{font-size:13px;color:var(--muted);margin-top:7px;max-width:15ch}
 
 .hero__media{position:relative;align-self:end;justify-self:center;width:100%;max-width:520px}
@@ -421,6 +426,25 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
 .video--empty .video__note{text-align:center;padding:24px;font-size:14.5px;max-width:34ch}
 .video--empty svg{width:32px;height:32px;margin:0 auto 12px;color:var(--green);opacity:.55}
 
+/* ——— команда ——— */
+/* Колонки задаём явно, а не auto-fit: при автоподборе восемь карточек легко
+   ложатся как «шесть и две» или «семь и одна», и одинокая карточка в хвосте
+   читается как поломка. 4 / 3 / 2 — в последнем ряду всегда не меньше двух. */
+.team{display:grid;gap:clamp(14px,1.8vw,22px);grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:900px){.team{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:620px){.team{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.team__card{margin:0;text-align:center}
+.team__photo{
+  position:relative;aspect-ratio:1;border-radius:var(--r);overflow:hidden;
+  background:var(--sand);display:grid;place-items:center;margin-bottom:13px;
+}
+.team__photo img{width:100%;height:100%;object-fit:cover}
+.team__photo--empty{border:1.5px dashed var(--line)}
+.team__silhouette{width:38%;max-width:60px;color:var(--green);opacity:.38}
+.team__name{display:block;font-weight:700;font-size:15.5px}
+.team__role{display:block;font-size:14.5px;color:var(--ink-2);font-weight:600}
+.team__note{display:block;font-size:12.5px;color:var(--muted);margin-top:4px}
+
 /* ——— блог ——— */
 .posts{display:grid;gap:clamp(16px,2vw,26px);grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr))}
 .post-card{
@@ -489,7 +513,7 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
   margin:26px 0 0;padding:22px 26px;border-left:3px solid var(--green);background:var(--mint);
   border-radius:0 var(--r) var(--r) 0;font-family:var(--serif);font-size:19px;line-height:1.5;
 }
-.about__stats{display:flex;flex-wrap:wrap;gap:30px 44px;margin-top:30px}
+.about__stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px clamp(14px,2.2vw,40px);margin-top:30px}
 
 /* ——— FAQ ——— */
 .faq{max-width:840px;margin-inline:auto;display:grid;gap:11px}
@@ -859,34 +883,15 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
       <div class="section-head__text">
         <p class="eyebrow">Заказать расчёт</p>
         <h2 class="display">Предварительная стоимость</h2>
-        <p class="lead">Три вопроса — и вы видите порядок цены. Без звонка и ожидания.</p>
+        <p class="lead">Двигайте ползунок — и видите порядок цены. Без звонка и ожидания.</p>
       </div>
     </div>
 
-    <div class="calc reveal">
+    <div class="calc reveal" data-scroll-to>
       <form class="calc__controls" id="calcForm">
         <div class="field">
-          <label for="layout">Планировка</label>
-          <select id="layout" name="layout">
-            <option value="1">В одну стену</option>
-            <option value="1.18" selected>Угловая</option>
-            <option value="1.32">П-образная</option>
-            <option value="1.45">С островом</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="length">Длина по фронту — <output id="lengthOut">3,5</output> м</label>
+          <label for="length">Длина кухни по фронту — <output id="lengthOut">3,5</output> м</label>
           <input type="range" id="length" name="length" min="1.5" max="8" step="0.1" value="3.5">
-        </div>
-        <div class="field">
-          <label for="facade">Фасады</label>
-          <select id="facade" name="facade">
-            <option value="23000">Плёночный МДФ</option>
-            <option value="38000" selected>МДФ в эмали</option>
-            <option value="30000">Пластик HPL</option>
-            <option value="50000">Шпон</option>
-            <option value="60000">Массив дерева</option>
-          </select>
         </div>
       </form>
 
@@ -912,8 +917,9 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
       </form>
 
       <p class="form__status" id="leadStatus" role="status"></p>
-      <p class="calc__note">Расчёт предварительный и не является офертой — точную смету считаем после замера.
-        Отправляя заявку, вы соглашаетесь с обработкой персональных данных.</p>
+      <p class="calc__note">Цена действует для кухонь высотой до 2,40 м. Антресоль, кухня в потолок и нестандартные
+        решения считаем отдельно, шпон и массив — тоже. Расчёт предварительный и не является офертой: точную смету
+        считаем после замера. Отправляя заявку, вы соглашаетесь с обработкой персональных данных.</p>
     </div>
   </div>
 </section>
@@ -927,14 +933,29 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
     <div class="reveal">
       <p class="eyebrow">О мастерской</p>
       <h2 class="display">Работаем руками, отвечаем лично</h2>
-      <p class="lead">«Юрич Мебель» — небольшая мастерская, а не мебельная фабрика с колл-центром. Я сам приезжаю на замер, сам согласовываю проект и сам отвечаю, если что-то пошло не так.</p>
-      <blockquote class="about__quote">Кухня — это не набор шкафов. Это то, как вы двигаетесь по комнате каждое утро. Если это продумано, вы никогда об этом не задумаетесь.</blockquote>
+      <p class="lead">«Юрич Мебель» — команда из двадцати человек, а не раздутый штат: вопросы решаются быстрее. Я лично контролирую все процессы, обучаю сотрудников и общаюсь с клиентами, чтобы сервис не стоял на месте, а становился лучше с каждым днём.</p>
+      <blockquote class="about__quote">Хорошая кухня — та, о которой не приходится думать. Всё просто на своём месте.</blockquote>
       <div class="about__stats">
         <div class="fact"><div class="fact__num">400+</div><div class="fact__label">кухонь собрано</div></div>
         <div class="fact"><div class="fact__num">30 дней</div><div class="fact__label">средний срок</div></div>
         <div class="fact"><div class="fact__num">0 ₽</div><div class="fact__label">замер и проект</div></div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- КОМАНДА -->
+<section class="section section--tint" id="team">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-head__text">
+        <p class="eyebrow">Команда</p>
+        <h2 class="display">Над кухней работает двадцать человек</h2>
+        <p class="lead">Замер, проект, закупка, производство, доставка и монтаж — у каждого этапа свой ответственный,
+          а не один мастер на всё. Я контролирую процессы и отвечаю за результат как собственник.</p>
+      </div>
+    </div>
+    <div class="team stagger" id="team-grid"></div>
   </div>
 </section>
 
@@ -950,7 +971,7 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
     <div class="faq stagger">
       <details open><summary>Сколько стоит замер и проект?</summary><p>Бесплатно и ни к чему не обязывает. Мы приезжаем с образцами, снимаем размеры и отдаём схему коммуникаций — даже если вы в итоге закажете кухню не у нас.</p></details>
       <details><summary>Можно заказать кухню до ремонта?</summary><p>Не только можно — так правильно. По проекту кухни мы отдаём точные высоты розеток и вывода воды, и электрик с плиточником работают уже по ним. Это снимает большую часть будущих проблем.</p></details>
-      <details><summary>Как формируется цена?</summary><p>Из длины по фронту, материала фасадов, столешницы и фурнитуры. После замера смета фиксируется в договоре и дальше не меняется.</p></details>
+      <details><summary>Как формируется цена?</summary><p>Считаем от длины кухни по фронту — в цену метра уже входят корпус, фасады, столешница, фурнитура и сборка. Материал фасадов на цену не влияет: плёночный МДФ, пластик и эмаль идут по одной ставке. Отдельно считаем шпон и массив, антресоль, кухню в потолок и нестандартные решения. После замера смета фиксируется в договоре и дальше не меняется.</p></details>
       <details><summary>Работаете со своими материалами заказчика?</summary><p>Да, если материал подходит по технологии. Например, столешницу или технику можно купить самостоятельно — мы заложим её в проект и установим.</p></details>
       <details><summary>Что входит в гарантию 3 года?</summary><p>Корпус, фасады, фурнитура и качество монтажа. Гарантийные выезды делаем сами, без переадресации к производителям комплектующих.</p></details>
       <details><summary>Есть рассрочка?</summary><p>Да, до 12 месяцев без переплаты. Обсуждаем условия при подписании договора.</p></details>
@@ -1141,6 +1162,11 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
 /* ЕДИНЫЙ ФАЙЛ НАСТРОЕК САЙТА.
    Поменяйте значения здесь — они подставятся во все страницы сразу. */
 window.SITE = {
+  /* Цена метра кухни «под ключ»: корпус, фасады, столешница, фурнитура, сборка.
+     По этой ставке считаются все материалы, кроме шпона и массива — их,
+     как и антресоль, кухню в потолок и нестандарт, считают отдельно. */
+  pricePerMeter: 90000,
+
   // — контакты —
   phone:    '+7 999 123-45-67',        // как показывать на сайте
   phoneRaw: '+79991234567',            // для ссылки «позвонить», только цифры и +
@@ -1492,6 +1518,7 @@ const works  = window.WORKS  || [];
 const collections = window.COLLECTIONS || [];
 const posts  = window.POSTS  || [];
 const videos = window.VIDEOS || [];
+const team   = window.TEAM   || [];
 
 /* В однофайловой сборке картинки лежат в window.ASSETS как data-URI, а страницы
    блога живут по хешу. В обычной версии обе функции возвращают исходный путь. */
@@ -1542,8 +1569,16 @@ document.addEventListener('click', e => {
   // ссылка на неё означает «в самый верх страницы»
   const pinned = ['sticky', 'fixed'].includes(getComputedStyle(target).position);
   const behavior = reduceMotion ? 'auto' : 'smooth';
+  // У секции сверху заголовок и большой отступ, и прыжок по якорю упирался
+  // в них: до полей заявки приходилось доскролливать руками. Если внутри
+  // размечено, к чему на самом деле вести (data-scroll-to), ведём туда.
+  const aim = target.querySelector('[data-scroll-to]') || target;
   if (pinned) scrollTo({ top: 0, behavior });
-  else target.scrollIntoView({ behavior, block: 'start' });
+  else if (aim !== target) {
+    const head = $('.header');
+    const gap = (head ? head.getBoundingClientRect().height : 0) + 14;
+    scrollTo({ top: Math.max(0, aim.getBoundingClientRect().top + scrollY - gap), behavior });
+  } else target.scrollIntoView({ behavior, block: 'start' });
   history.replaceState(null, '', '#' + id);
 });
 
@@ -1819,6 +1854,28 @@ function renderVideos(root, limit) {
   }));
 }
 
+/* ——— команда ——— */
+function renderTeam(root) {
+  if (!root) return;
+  root.innerHTML = team.map(m => {
+    // пока фото нет — одинаковый силуэт: пустая рамка выглядит поломкой,
+    // а инициал должности давал два «Д» подряд у двух директоров
+    const face = m.photo
+      ? `<img src="${esc(asset(m.photo))}" alt="${esc(m.name || m.role)}" loading="lazy">`
+      : `<svg class="team__silhouette" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="8.5" r="3.8"/>
+           <path d="M4.5 20c.9-4 3.9-6 7.5-6s6.6 2 7.5 6" stroke-linecap="round"/></svg>`;
+    return `<figure class="team__card">
+      <div class="team__photo${m.photo ? '' : ' team__photo--empty'}">${face}</div>
+      <figcaption>
+        ${m.name ? `<b class="team__name">${esc(m.name)}</b>` : ''}
+        <span class="team__role">${esc(m.role)}</span>
+        ${m.note ? `<span class="team__note">${esc(m.note)}</span>` : ''}
+      </figcaption>
+    </figure>`;
+  }).join('');
+}
+
 /* ——— блог ——— */
 function postCard(p) {
   return `<a class="post-card" href="${postHref(p.slug)}">
@@ -1864,16 +1921,16 @@ function tweenMoney(el, to) {
 const calcForm = $('#calcForm');
 function calculate() {
   if (!calcForm) return;
+  // Считаем просто: метры по фронту на цену метра под ключ. Материал на цену
+  // не влияет — все фасады идут по одной ставке, а шпон и массив в расчёт не
+  // входят вовсе, про это написано под формой.
   const length = parseFloat($('#length').value);
-  const layout = parseFloat($('#layout').value);   // надбавка за форму гарнитура
-  const facade = parseFloat($('#facade').value);   // цена метра под ключ
-  const total  = length * layout * facade;
+  const total  = length * (cfg.pricePerMeter || 90000);
 
   $('#lengthOut').textContent = length.toFixed(1).replace('.', ',');
   tweenMoney($('#sumTotal'), total);
   const hidden = $('#leadEstimate');
-  if (hidden) hidden.value = `${money(total)} · ${length.toFixed(1)} м · ` +
-    `${$('#layout').selectedOptions[0].text.toLowerCase()} · ${$('#facade').selectedOptions[0].text}`;
+  if (hidden) hidden.value = `${money(total)} · ${length.toFixed(1)} м по фронту`;
 }
 calcForm?.addEventListener('input', calculate);
 calculate();
@@ -1998,6 +2055,7 @@ if (year) year.textContent = String(new Date().getFullYear());
   () => renderGallery($('.filter.is-active')?.dataset.filter || works[0]?.category),
   () => renderVideos($('#videos'), 3),
   () => renderVideos($('#allVideos')),
+  () => renderTeam($('#team-grid')),
   reveal,
   initCounters,
   initParallax,

@@ -237,34 +237,15 @@
       <div class="section-head__text">
         <p class="eyebrow">Заказать расчёт</p>
         <h2 class="display">Предварительная стоимость</h2>
-        <p class="lead">Три вопроса — и вы видите порядок цены. Без звонка и ожидания.</p>
+        <p class="lead">Двигайте ползунок — и видите порядок цены. Без звонка и ожидания.</p>
       </div>
     </div>
 
-    <div class="calc reveal">
+    <div class="calc reveal" data-scroll-to>
       <form class="calc__controls" id="calcForm">
         <div class="field">
-          <label for="layout">Планировка</label>
-          <select id="layout" name="layout">
-            <option value="1">В одну стену</option>
-            <option value="1.18" selected>Угловая</option>
-            <option value="1.32">П-образная</option>
-            <option value="1.45">С островом</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="length">Длина по фронту — <output id="lengthOut">3,5</output> м</label>
+          <label for="length">Длина кухни по фронту — <output id="lengthOut">3,5</output> м</label>
           <input type="range" id="length" name="length" min="1.5" max="8" step="0.1" value="3.5">
-        </div>
-        <div class="field">
-          <label for="facade">Фасады</label>
-          <select id="facade" name="facade">
-            <option value="23000">Плёночный МДФ</option>
-            <option value="38000" selected>МДФ в эмали</option>
-            <option value="30000">Пластик HPL</option>
-            <option value="50000">Шпон</option>
-            <option value="60000">Массив дерева</option>
-          </select>
         </div>
       </form>
 
@@ -290,8 +271,9 @@
       </form>
 
       <p class="form__status" id="leadStatus" role="status"></p>
-      <p class="calc__note">Расчёт предварительный и не является офертой — точную смету считаем после замера.
-        Отправляя заявку, вы соглашаетесь с обработкой персональных данных.</p>
+      <p class="calc__note">Цена действует для кухонь высотой до 2,40 м. Антресоль, кухня в потолок и нестандартные
+        решения считаем отдельно, шпон и массив — тоже. Расчёт предварительный и не является офертой: точную смету
+        считаем после замера. Отправляя заявку, вы соглашаетесь с обработкой персональных данных.</p>
     </div>
   </div>
 </section>
@@ -305,14 +287,29 @@
     <div class="reveal">
       <p class="eyebrow">О мастерской</p>
       <h2 class="display">Работаем руками, отвечаем лично</h2>
-      <p class="lead">«Юрич Мебель» — небольшая мастерская, а не мебельная фабрика с колл-центром. Я сам приезжаю на замер, сам согласовываю проект и сам отвечаю, если что-то пошло не так.</p>
-      <blockquote class="about__quote">Кухня — это не набор шкафов. Это то, как вы двигаетесь по комнате каждое утро. Если это продумано, вы никогда об этом не задумаетесь.</blockquote>
+      <p class="lead">«Юрич Мебель» — команда из двадцати человек, а не раздутый штат: вопросы решаются быстрее. Я лично контролирую все процессы, обучаю сотрудников и общаюсь с клиентами, чтобы сервис не стоял на месте, а становился лучше с каждым днём.</p>
+      <blockquote class="about__quote">Хорошая кухня — та, о которой не приходится думать. Всё просто на своём месте.</blockquote>
       <div class="about__stats">
         <div class="fact"><div class="fact__num">400+</div><div class="fact__label">кухонь собрано</div></div>
         <div class="fact"><div class="fact__num">30 дней</div><div class="fact__label">средний срок</div></div>
         <div class="fact"><div class="fact__num">0 ₽</div><div class="fact__label">замер и проект</div></div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- КОМАНДА -->
+<section class="section section--tint" id="team">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-head__text">
+        <p class="eyebrow">Команда</p>
+        <h2 class="display">Над кухней работает двадцать человек</h2>
+        <p class="lead">Замер, проект, закупка, производство, доставка и монтаж — у каждого этапа свой ответственный,
+          а не один мастер на всё. Я контролирую процессы и отвечаю за результат как собственник.</p>
+      </div>
+    </div>
+    <div class="team stagger" id="team-grid"></div>
   </div>
 </section>
 
@@ -328,7 +325,7 @@
     <div class="faq stagger">
       <details open><summary>Сколько стоит замер и проект?</summary><p>Бесплатно и ни к чему не обязывает. Мы приезжаем с образцами, снимаем размеры и отдаём схему коммуникаций — даже если вы в итоге закажете кухню не у нас.</p></details>
       <details><summary>Можно заказать кухню до ремонта?</summary><p>Не только можно — так правильно. По проекту кухни мы отдаём точные высоты розеток и вывода воды, и электрик с плиточником работают уже по ним. Это снимает большую часть будущих проблем.</p></details>
-      <details><summary>Как формируется цена?</summary><p>Из длины по фронту, материала фасадов, столешницы и фурнитуры. После замера смета фиксируется в договоре и дальше не меняется.</p></details>
+      <details><summary>Как формируется цена?</summary><p>Считаем от длины кухни по фронту — в цену метра уже входят корпус, фасады, столешница, фурнитура и сборка. Материал фасадов на цену не влияет: плёночный МДФ, пластик и эмаль идут по одной ставке. Отдельно считаем шпон и массив, антресоль, кухню в потолок и нестандартные решения. После замера смета фиксируется в договоре и дальше не меняется.</p></details>
       <details><summary>Работаете со своими материалами заказчика?</summary><p>Да, если материал подходит по технологии. Например, столешницу или технику можно купить самостоятельно — мы заложим её в проект и установим.</p></details>
       <details><summary>Что входит в гарантию 3 года?</summary><p>Корпус, фасады, фурнитура и качество монтажа. Гарантийные выезды делаем сами, без переадресации к производителям комплектующих.</p></details>
       <details><summary>Есть рассрочка?</summary><p>Да, до 12 месяцев без переплаты. Обсуждаем условия при подписании договора.</p></details>
@@ -419,6 +416,7 @@
 <script src="content/works.js"></script>
 <script src="content/posts.js"></script>
 <script src="content/videos.js"></script>
+<script src="content/team.js"></script>
 <script src="assets/js/main.js" defer></script>
 </body>
 </html>

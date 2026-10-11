@@ -9,6 +9,7 @@ const works  = window.WORKS  || [];
 const collections = window.COLLECTIONS || [];
 const posts  = window.POSTS  || [];
 const videos = window.VIDEOS || [];
+const team   = window.TEAM   || [];
 
 /* В однофайловой сборке картинки лежат в window.ASSETS как data-URI, а страницы
    блога живут по хешу. В обычной версии обе функции возвращают исходный путь. */
@@ -59,8 +60,16 @@ document.addEventListener('click', e => {
   // ссылка на неё означает «в самый верх страницы»
   const pinned = ['sticky', 'fixed'].includes(getComputedStyle(target).position);
   const behavior = reduceMotion ? 'auto' : 'smooth';
+  // У секции сверху заголовок и большой отступ, и прыжок по якорю упирался
+  // в них: до полей заявки приходилось доскролливать руками. Если внутри
+  // размечено, к чему на самом деле вести (data-scroll-to), ведём туда.
+  const aim = target.querySelector('[data-scroll-to]') || target;
   if (pinned) scrollTo({ top: 0, behavior });
-  else target.scrollIntoView({ behavior, block: 'start' });
+  else if (aim !== target) {
+    const head = $('.header');
+    const gap = (head ? head.getBoundingClientRect().height : 0) + 14;
+    scrollTo({ top: Math.max(0, aim.getBoundingClientRect().top + scrollY - gap), behavior });
+  } else target.scrollIntoView({ behavior, block: 'start' });
   history.replaceState(null, '', '#' + id);
 });
 
@@ -336,6 +345,28 @@ function renderVideos(root, limit) {
   }));
 }
 
+/* ——— команда ——— */
+function renderTeam(root) {
+  if (!root) return;
+  root.innerHTML = team.map(m => {
+    // пока фото нет — одинаковый силуэт: пустая рамка выглядит поломкой,
+    // а инициал должности давал два «Д» подряд у двух директоров
+    const face = m.photo
+      ? `<img src="${esc(asset(m.photo))}" alt="${esc(m.name || m.role)}" loading="lazy">`
+      : `<svg class="team__silhouette" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="8.5" r="3.8"/>
+           <path d="M4.5 20c.9-4 3.9-6 7.5-6s6.6 2 7.5 6" stroke-linecap="round"/></svg>`;
+    return `<figure class="team__card">
+      <div class="team__photo${m.photo ? '' : ' team__photo--empty'}">${face}</div>
+      <figcaption>
+        ${m.name ? `<b class="team__name">${esc(m.name)}</b>` : ''}
+        <span class="team__role">${esc(m.role)}</span>
+        ${m.note ? `<span class="team__note">${esc(m.note)}</span>` : ''}
+      </figcaption>
+    </figure>`;
+  }).join('');
+}
+
 /* ——— блог ——— */
 function postCard(p) {
   return `<a class="post-card" href="${postHref(p.slug)}">
@@ -381,16 +412,16 @@ function tweenMoney(el, to) {
 const calcForm = $('#calcForm');
 function calculate() {
   if (!calcForm) return;
+  // Считаем просто: метры по фронту на цену метра под ключ. Материал на цену
+  // не влияет — все фасады идут по одной ставке, а шпон и массив в расчёт не
+  // входят вовсе, про это написано под формой.
   const length = parseFloat($('#length').value);
-  const layout = parseFloat($('#layout').value);   // надбавка за форму гарнитура
-  const facade = parseFloat($('#facade').value);   // цена метра под ключ
-  const total  = length * layout * facade;
+  const total  = length * (cfg.pricePerMeter || 90000);
 
   $('#lengthOut').textContent = length.toFixed(1).replace('.', ',');
   tweenMoney($('#sumTotal'), total);
   const hidden = $('#leadEstimate');
-  if (hidden) hidden.value = `${money(total)} · ${length.toFixed(1)} м · ` +
-    `${$('#layout').selectedOptions[0].text.toLowerCase()} · ${$('#facade').selectedOptions[0].text}`;
+  if (hidden) hidden.value = `${money(total)} · ${length.toFixed(1)} м по фронту`;
 }
 calcForm?.addEventListener('input', calculate);
 calculate();
@@ -515,6 +546,7 @@ if (year) year.textContent = String(new Date().getFullYear());
   () => renderGallery($('.filter.is-active')?.dataset.filter || works[0]?.category),
   () => renderVideos($('#videos'), 3),
   () => renderVideos($('#allVideos')),
+  () => renderTeam($('#team-grid')),
   reveal,
   initCounters,
   initParallax,

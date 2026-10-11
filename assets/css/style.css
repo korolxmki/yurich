@@ -183,8 +183,13 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
 .hero__title span{display:block}
 .hero__sub{font-size:clamp(17px,1.9vw,20px);color:var(--ink-2);max-width:44ch;margin:0 0 34px}
 .hero__cta{display:flex;flex-wrap:wrap;gap:13px;margin-bottom:clamp(30px,4.5vw,46px)}
-.hero__facts{display:flex;flex-wrap:wrap;gap:clamp(22px,4vw,48px);padding-bottom:clamp(36px,5vw,56px)}
-.fact__num{font-family:var(--serif);font-size:clamp(30px,3.8vw,42px);line-height:1;color:var(--green)}
+/* Три цифры держим тремя колонками, а не переносом по флексу: при переносе
+   третья уезжала на свою строку и рядом оставалась дыра. В колонке переносится
+   подпись, а сама цифра остаётся на месте. */
+.hero__facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(14px,2.6vw,44px);padding-bottom:clamp(36px,5vw,56px)}
+.fact__num{font-family:var(--serif);font-size:clamp(30px,3.8vw,42px);line-height:1;color:var(--green);white-space:nowrap}
+/* в трети узкого экрана «30 дней» 30-м кеглем уже не помещается */
+@media (max-width:560px){.fact__num{font-size:clamp(21px,5.6vw,30px)}.fact__label{font-size:12px}}
 .fact__label{font-size:13px;color:var(--muted);margin-top:7px;max-width:15ch}
 
 .hero__media{position:relative;align-self:end;justify-self:center;width:100%;max-width:520px}
@@ -347,6 +352,25 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
 .video--empty .video__note{text-align:center;padding:24px;font-size:14.5px;max-width:34ch}
 .video--empty svg{width:32px;height:32px;margin:0 auto 12px;color:var(--green);opacity:.55}
 
+/* ——— команда ——— */
+/* Колонки задаём явно, а не auto-fit: при автоподборе восемь карточек легко
+   ложатся как «шесть и две» или «семь и одна», и одинокая карточка в хвосте
+   читается как поломка. 4 / 3 / 2 — в последнем ряду всегда не меньше двух. */
+.team{display:grid;gap:clamp(14px,1.8vw,22px);grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:900px){.team{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:620px){.team{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.team__card{margin:0;text-align:center}
+.team__photo{
+  position:relative;aspect-ratio:1;border-radius:var(--r);overflow:hidden;
+  background:var(--sand);display:grid;place-items:center;margin-bottom:13px;
+}
+.team__photo img{width:100%;height:100%;object-fit:cover}
+.team__photo--empty{border:1.5px dashed var(--line)}
+.team__silhouette{width:38%;max-width:60px;color:var(--green);opacity:.38}
+.team__name{display:block;font-weight:700;font-size:15.5px}
+.team__role{display:block;font-size:14.5px;color:var(--ink-2);font-weight:600}
+.team__note{display:block;font-size:12.5px;color:var(--muted);margin-top:4px}
+
 /* ——— блог ——— */
 .posts{display:grid;gap:clamp(16px,2vw,26px);grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr))}
 .post-card{
@@ -415,7 +439,7 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
   margin:26px 0 0;padding:22px 26px;border-left:3px solid var(--green);background:var(--mint);
   border-radius:0 var(--r) var(--r) 0;font-family:var(--serif);font-size:19px;line-height:1.5;
 }
-.about__stats{display:flex;flex-wrap:wrap;gap:30px 44px;margin-top:30px}
+.about__stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px clamp(14px,2.2vw,40px);margin-top:30px}
 
 /* ——— FAQ ——— */
 .faq{max-width:840px;margin-inline:auto;display:grid;gap:11px}
