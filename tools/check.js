@@ -87,9 +87,9 @@ function serve() {
     const inv = await p.$$eval('.reveal, .stagger > *', els =>
       els.filter(e => e.getBoundingClientRect().height > 0 && parseFloat(getComputedStyle(e).opacity) < .9).length);
     const txt = (await p.innerText('body')).replace(/\s+/g, ' ');
-    const ok = inv === 0 && txt.includes('Своё производство');
+    const ok = inv === 0 && txt.includes('Команда, а не один мастер');
     console.log(`${ok ? '✓' : '✗'} запас прочности: ${label}`);
-    if (!ok) fail(`скрыто блоков: ${inv}, текст на месте: ${txt.includes('Своё производство')}`);
+    if (!ok) fail(`скрыто блоков: ${inv}, текст на месте: ${txt.includes('Команда, а не один мастер')}`);
     await ctx.close();
   }
 
