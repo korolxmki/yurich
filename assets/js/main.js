@@ -409,6 +409,11 @@ function tweenMoney(el, to) {
   moneyFrame = requestAnimationFrame(tick);
 }
 
+// Заполняется расчётом, читается ссылкой в Telegram. Объявлено до calculate():
+// calculate() вызывается здесь же при старте, и объявление ниже по файлу
+// роняло бы его на мёртвой зоне let — а с ним и всё, что идёт дальше.
+let lastEstimate = '';
+
 const calcForm = $('#calcForm');
 function calculate() {
   if (!calcForm) return;
@@ -420,8 +425,8 @@ function calculate() {
 
   $('#lengthOut').textContent = length.toFixed(1).replace('.', ',');
   tweenMoney($('#sumTotal'), total);
-  const hidden = $('#leadEstimate');
-  if (hidden) hidden.value = `${money(total)} · ${length.toFixed(1)} м по фронту`;
+  lastEstimate = `${money(total)} · ${length.toFixed(1).replace('.', ',')} м по фронту`;
+  updateTelegramLink();
 }
 calcForm?.addEventListener('input', calculate);
 calculate();
@@ -450,87 +455,30 @@ function applyConfig() {
 }
 applyConfig();
 
-/* ——— заявка ——— */
-function leadText(name, phone) {
-  const est = $('#leadEstimate')?.value;
-  return [
-    'Заявка с сайта «Юрич Мебель»',
-    `Имя: ${name}`,
-    `Телефон: ${phone}`,
-    est ? `Расчёт: ${est}` : '',
+/* ——— заявка ———
+   Ни имени, ни телефона не спрашиваем: заявка уходит в личку в Telegram, и
+   кто написал — там и так видно. Расчёт подставляем прямо в текст сообщения,
+   чтобы человеку осталось нажать «Отправить». Персональных данных сайт не
+   собирает вовсе, поэтому не нужно ни согласия, ни обработчика форм. */
+function telegramUser() {
+  return (cfg.telegram || '').trim()
+    .replace(/^https?:\/\/(www\.)?t\.me\//i, '')
+    .replace(/^@/, '')
+    .replace(/[/?#].*$/, '');
+}
+
+function updateTelegramLink() {
+  const link = $('#leadTelegram');
+  if (!link) return;
+  const user = telegramUser();
+  if (!user) return link.remove();   // не настроен — лучше ничего, чем битая кнопка
+  const text = [
+    'Здравствуйте! Пишу с сайта «Юрич Мебель».',
+    lastEstimate ? `Мой расчёт: ${lastEstimate}` : '',
+    'Хочу обсудить кухню.',
   ].filter(Boolean).join('\n');
+  link.href = `https://t.me/${user}?text=${encodeURIComponent(text)}`;
 }
-
-$('#leadForm')?.addEventListener('submit', async e => {
-  e.preventDefault();
-  const form = e.currentTarget;
-  const status = $('#leadStatus');
-  const name  = $('#leadName').value.trim();
-  const phone = $('#leadPhone').value.trim();
-
-  if (name.length < 2)                      return say(status, 'Укажите, как к вам обращаться.', true);
-  if (phone.replace(/\D/g, '').length < 10) return say(status, 'Проверьте номер телефона.', true);
-
-  const text = leadText(name, phone);
-  const btn = form.querySelector('button[type=submit]');
-
-  // Ни один канал не настроен — открываем WhatsApp с готовым текстом,
-  // чтобы заявка всё равно дошла, а не исчезла в никуда.
-  if (!cfg.bitrixWebhook && !cfg.formEndpoint) return viaWhatsApp(text, status);
-
-  btn.disabled = true;
-  say(status, 'Отправляем…');
-  try {
-    if (cfg.bitrixWebhook) await sendToBitrix(name, phone);
-    else await sendToEndpoint(form);
-    say(status, 'Заявка отправлена — перезвоним в течение рабочего дня.');
-    form.reset();
-    calculate();
-  } catch (err) {
-    // CRM не ответила — не теряем заявку, уводим в WhatsApp
-    console.warn('Заявку не удалось отправить:', err);
-    if (!viaWhatsApp(text, status)) {
-      say(status, `Не удалось отправить. Позвоните нам: ${cfg.phone || ''}`, true);
-    }
-  } finally {
-    btn.disabled = false;
-  }
-});
-
-/* Лид в Битрикс24 через входящий вебхук: crm.lead.add */
-async function sendToBitrix(name, phone) {
-  const base = cfg.bitrixWebhook.replace(/\/+$/, '');
-  const body = new URLSearchParams();
-  body.set('fields[TITLE]', `Заявка с сайта — ${name}`);
-  body.set('fields[NAME]', name);
-  body.set('fields[PHONE][0][VALUE]', phone);
-  body.set('fields[PHONE][0][VALUE_TYPE]', 'WORK');
-  body.set('fields[SOURCE_ID]', cfg.bitrixSource || 'WEB');
-  const est = $('#leadEstimate')?.value;
-  if (est) body.set('fields[COMMENTS]', 'Расчёт на сайте: ' + est);
-
-  const res = await fetch(base + '/crm.lead.add.json', { method: 'POST', body });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok || data.error) throw new Error(data.error_description || data.error || res.status);
-  return data.result;
-}
-
-async function sendToEndpoint(form) {
-  const res = await fetch(cfg.formEndpoint, {
-    method: 'POST',
-    headers: { 'Accept': 'application/json' },
-    body: new FormData(form),
-  });
-  if (!res.ok) throw new Error(res.status);
-}
-
-function viaWhatsApp(text, status) {
-  if (!cfg.whatsapp) return false;
-  open(`https://wa.me/${cfg.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
-  say(status, 'Открыли WhatsApp с готовым сообщением — осталось нажать «Отправить».');
-  return true;
-}
-function say(el, msg, isError) { el.style.color = isError ? '#C0392B' : ''; el.textContent = msg; }
 
 /* ——— мелочи ——— */
 const year = $('#year');
