@@ -322,8 +322,13 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
   aspect-ratio:16/9;display:grid;place-items:center;
 }
 /* окно Instagram не описывается пропорцией: его высота — это 125% ширины
-   плюс постоянная шапка, поэтому высоту задаём отступом сверху */
+   плюс постоянная шапка, поэтому высоту задаём отступом сверху. Окно при
+   этом ниже своего содержимого — так и отрезается их нижняя панель. */
 .video--pad{aspect-ratio:auto;height:0;display:block}
+.ig__link{display:grid;place-items:center;padding:14px 0 2px;color:var(--muted);
+  transition:color .2s var(--ease)}
+.ig__link svg{width:25px;height:25px}
+.ig__link:hover{color:var(--green)}
 .video iframe,.video__player{position:absolute;inset:0;width:100%;height:100%;border:0}
 .video__player{object-fit:cover;background:var(--ink)}
 .video__cover{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.62}

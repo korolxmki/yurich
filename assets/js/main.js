@@ -263,13 +263,18 @@ addEventListener('keydown', e => {
 });
 
 /* ——— видео ——— */
-/* Instagram показывает ролик в своём окне, и оно живёт по своим правилам:
-   медиа занимает 125% ширины (их портрет 4:5, вертикальный рилс внутри него
-   идёт с чёрными полями), а шапка с лайками и полем комментария — ровно
-   208 пикселей при любой ширине. Замерено от 300 до 600 px, сходится точно.
-   Поэтому высоту считаем формулой, а не пропорцией: с фиксированной
-   пропорцией либо обрежет низ, либо останется пустая полоса. */
-const IG_MEDIA = 125, IG_CHROME = 208;
+/* Окно Instagram живёт по своим правилам, и устроено оно одинаково на любой
+   ширине (замерено от 300 до 600 px, сходится точно):
+     54 px   — шапка: аватар, имя аккаунта, кнопка «Посмотреть профиль»;
+     125%    — само медиа, их портрет 4:5 (вертикальный рилс идёт в нём
+               с чёрными полями по бокам — это внутри их окна, не наше);
+     154 px  — нижняя панель: сердечко, комментарий, «отправить», счётчик
+               лайков и поле «добавьте комментарий».
+   Нижнюю панель отрезаем: на лендинге мебельщика счётчик лайков и поле
+   комментария выглядят чужим виджетом. Отрезаем именно обрезкой окна —
+   изнутри чужой iframe со своей страницы не стилизуется никак.
+   Ссылку на пост при этом не теряем: ставим под окном свой значок. */
+const IG_MEDIA = 125, IG_HEAD = 54;
 const isInstagram = url => /\/\/(www\.)?instagram\.com\//.test(url || '');
 
 function videoCard(v) {
@@ -278,7 +283,7 @@ function videoCard(v) {
   const ratio = v.ratio || '16/9';
   const ig = isInstagram(v.embed);
   const box = ig
-    ? `class="video video--pad" style="padding-top:calc(${IG_MEDIA}% + ${IG_CHROME}px)"`
+    ? `class="video video--pad" style="padding-top:calc(${IG_MEDIA}% + ${IG_HEAD}px)"`
     : `class="video" style="aspect-ratio:${esc(ratio)}"`;
   const cover = v.cover ? `<img class="video__cover" src="${esc(asset(v.cover))}" alt="" loading="lazy">` : '';
   const title = v.title ? `<div class="video__title">${esc(v.title)}</div>` : '';
@@ -294,10 +299,21 @@ function videoCard(v) {
   // чёрный прямоугольник с кнопкой, по которому не понять, что за видео.
   // loading=lazy — чтобы он не грузился, пока до блока не долистают
   if (v.embed && !v.cover) {
-    return `<div ${box}>
+    const frame = `<div ${box}>
       <iframe src="${esc(v.embed)}" title="${esc(v.title || 'Видео')}" loading="lazy"
               allow="encrypted-media; picture-in-picture" allowfullscreen
               scrolling="no"></iframe>${title}</div>`;
+    if (!ig) return frame;
+    // вместо отрезанной панели — свой значок, он же ссылка на пост
+    const post = v.embed.replace(/embed\/?$/, '');
+    return `<div class="ig">${frame}
+      <a class="ig__link" href="${esc(post)}" target="_blank" rel="noopener"
+         aria-label="Смотреть в Instagram">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <rect x="2.5" y="2.5" width="19" height="19" rx="5.4"/>
+          <circle cx="12" cy="12" r="4.4"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/>
+        </svg>
+      </a></div>`;
   }
   const src = v.file ? ` data-file="${esc(asset(v.file))}"` : ` data-embed="${esc(v.embed)}"`;
   return `<div ${box}${src}>
