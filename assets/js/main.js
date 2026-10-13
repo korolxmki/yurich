@@ -475,7 +475,7 @@ function updateTelegramLink() {
   const text = [
     'Здравствуйте! Пишу с сайта «Юрич Мебель».',
     lastEstimate ? `Мой расчёт: ${lastEstimate}` : '',
-    'Хочу обсудить кухню.',
+    'Хочу обсудить заказ.',
   ].filter(Boolean).join('\n');
   link.href = `https://t.me/${user}?text=${encodeURIComponent(text)}`;
 }

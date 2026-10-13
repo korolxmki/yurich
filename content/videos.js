@@ -5,7 +5,7 @@
 
    1) Свой файл — так быстрее и без чужих скриптов:
       { file: 'assets/video/montazh.mp4', ratio: '9/16',
-        cover: 'assets/img/video/montazh.jpg', title: 'Монтаж кухни за день' }
+        cover: 'assets/img/video/montazh.jpg', title: 'Монтаж кухни' }
 
    2) Чужой проигрыватель — YouTube, VK или Instagram:
       { embed: 'https://www.instagram.com/reel/XXXXXXXXXXX/embed/', ratio: '9/16',
