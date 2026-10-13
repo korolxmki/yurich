@@ -507,7 +507,8 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
   margin:26px 0 0;padding:22px 26px;border-left:3px solid var(--green);background:var(--mint);
   border-radius:0 var(--r) var(--r) 0;font-family:var(--serif);font-size:19px;line-height:1.5;
 }
-.about__stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px clamp(14px,2.2vw,40px);margin-top:30px}
+/* здесь показателей два, поэтому и колонки две: при трёх правая оставалась бы пустой */
+.about__stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px clamp(14px,2.2vw,40px);margin-top:30px}
 
 /* ——— FAQ ——— */
 .faq{max-width:840px;margin-inline:auto;display:grid;gap:11px}
@@ -704,7 +705,7 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
   <div class="wrap hero__inner">
     <div class="hero__text">
       <h1 class="display hero__title"><span>Создаем</span><span>пространство</span><span>жизни</span></h1>
-      <p class="hero__sub">Кухни и корпусная мебель на заказ по вашим размерам. Команда из двадцати человек ведёт заказ от замера до сборки — без сюрпризов в смете.</p>
+      <p class="hero__sub">Кухни и корпусная мебель на заказ по вашим размерам. Ведём заказ от замера до сборки — без сюрпризов в смете.</p>
       <div class="hero__cta">
         <a class="btn" href="#calc">Рассчитать стоимость
           <svg class="btn__arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -732,8 +733,8 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
 
 <!-- БЕГУЩАЯ СТРОКА -->
 <div class="marquee" aria-hidden="true">
-  <div class="marquee__track"><span>Кухни и корпусная мебель на заказ</span><span>Команда из 20 человек</span><span>Материалы фиксируются в договоре</span><span>Гарантия 2 года</span><span>Рассрочка</span><span>Оперативный монтаж</span></div>
-  <div class="marquee__track"><span>Кухни и корпусная мебель на заказ</span><span>Команда из 20 человек</span><span>Материалы фиксируются в договоре</span><span>Гарантия 2 года</span><span>Рассрочка</span><span>Оперативный монтаж</span></div>
+  <div class="marquee__track"><span>Кухни и корпусная мебель на заказ</span><span>Материалы фиксируются в договоре</span><span>Гарантия 2 года</span><span>Рассрочка</span><span>Оперативный монтаж</span></div>
+  <div class="marquee__track"><span>Кухни и корпусная мебель на заказ</span><span>Материалы фиксируются в договоре</span><span>Гарантия 2 года</span><span>Рассрочка</span><span>Оперативный монтаж</span></div>
 </div>
 
 <!-- ПРЕИМУЩЕСТВА -->
@@ -914,12 +915,11 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
     <div class="reveal">
       <p class="eyebrow">О мастерской</p>
       <h2 class="display">Работаем руками, отвечаем лично</h2>
-      <p class="lead">«Юрич Мебель» — команда из двадцати человек, а не раздутый штат: вопросы решаются быстрее. Я лично контролирую все процессы, обучаю сотрудников и общаюсь с клиентами, чтобы сервис не стоял на месте, а становился лучше с каждым днём.</p>
+      <p class="lead">«Юрич Мебель» — команда, а не раздутый штат: вопросы решаются быстрее. Я лично контролирую все процессы, обучаю сотрудников и общаюсь с клиентами, чтобы сервис не стоял на месте, а становился лучше с каждым днём.</p>
       <blockquote class="about__quote">Хорошая кухня — та, о которой не приходится думать. Всё просто на своём месте.</blockquote>
       <div class="about__stats">
         <div class="fact"><div class="fact__num">400+</div><div class="fact__label">кухонь собрано</div></div>
         <div class="fact"><div class="fact__num">30 дней</div><div class="fact__label">средний срок</div></div>
-        <div class="fact"><div class="fact__num">20</div><div class="fact__label">человек в команде</div></div>
       </div>
     </div>
   </div>
@@ -931,7 +931,7 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
     <div class="section-head reveal">
       <div class="section-head__text">
         <p class="eyebrow">Команда</p>
-        <h2 class="display">Над кухней работает двадцать человек</h2>
+        <h2 class="display">Над заказом работает команда</h2>
         <p class="lead">Замер, проект, закупка, производство, доставка и монтаж — у каждого этапа свой ответственный,
           а не один мастер на всё. Я контролирую процессы и отвечаю за результат как собственник.</p>
       </div>
@@ -1105,7 +1105,7 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
           </svg>
           <span class="logo__text">Юрич Мебель</span>
         </a>
-        <p style="color:rgba(255,255,255,.62);font-size:15px;margin:16px 0 0;max-width:30ch">Кухни и корпусная мебель на заказ. Команда из двадцати человек, гарантия 2 года.</p>
+        <p style="color:rgba(255,255,255,.62);font-size:15px;margin:16px 0 0;max-width:30ch">Кухни и корпусная мебель на заказ. Гарантия 2 года.</p>
         <div class="socials">
           <a href="#" data-site="telegram" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.9 4.3 18.8 19c-.2 1-.9 1.3-1.7.8l-4.7-3.5-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.8 8.8-8c.4-.3-.1-.5-.6-.2L6.8 13.1 2.1 11.6c-1-.3-1-1 .2-1.5l18.2-7c.9-.3 1.6.2 1.4 1.2Z"/></svg></a>
           <a href="#" data-site="whatsapp" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2Zm5.5 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-1.7-.1-.4-.1-.9-.3-1.6-.6-2.7-1.2-4.5-4-4.6-4.2-.1-.2-1.1-1.4-1.1-2.7s.7-1.9.9-2.2c.2-.2.5-.3.6-.3h.5c.2 0 .4 0 .6.4l.8 2c.1.2.1.3 0 .5l-.3.5-.3.3c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.1 1 2 1.3 2.3 1.4.3.1.4.1.6-.1l.8-1c.2-.2.4-.2.6-.1l2 1c.2.1.4.2.4.3.1.2.1.6-.1 1.1Z"/></svg></a>

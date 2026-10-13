@@ -433,7 +433,8 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
   margin:26px 0 0;padding:22px 26px;border-left:3px solid var(--green);background:var(--mint);
   border-radius:0 var(--r) var(--r) 0;font-family:var(--serif);font-size:19px;line-height:1.5;
 }
-.about__stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px clamp(14px,2.2vw,40px);margin-top:30px}
+/* здесь показателей два, поэтому и колонки две: при трёх правая оставалась бы пустой */
+.about__stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px clamp(14px,2.2vw,40px);margin-top:30px}
 
 /* ——— FAQ ——— */
 .faq{max-width:840px;margin-inline:auto;display:grid;gap:11px}
