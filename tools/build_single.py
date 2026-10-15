@@ -47,7 +47,7 @@ def inner_main(html):
 
 def build():
     index, blog, post = read('index.html'), read('blog.html'), read('post.html')
-    collections = read('collections.html')
+    collections, privacy = read('collections.html'), read('privacy.html')
 
     # ——— стили: шрифты превращаем в data-URI прямо внутри @font-face ———
     fonts = read('assets/css/fonts.css')
@@ -85,6 +85,7 @@ def build():
     blog_view = inner_main(blog)
     post_view = inner_main(post)
     coll_view = inner_main(collections)
+    priv_view = inner_main(privacy)
 
     # id="collections" есть и на главной, и у секции-обёртки страницы коллекций
     coll_view = coll_view.replace('id="collections-all"', 'id="collections-all"')
@@ -101,11 +102,13 @@ def build():
         html = html.replace('href="blog.html#video"', 'href="#/blog"')
         html = html.replace('href="blog.html"', 'href="#/blog"')
         html = html.replace('href="collections.html"', 'href="#/collections"')
+        html = html.replace('href="privacy.html"', 'href="#/privacy"')
         html = html.replace('href="./"', 'href="#/"')
         return html
 
     header, tail = fix_links(header), fix_links(tail)
-    home, blog_view, post_view, coll_view = map(fix_links, (home, blog_view, post_view, coll_view))
+    home, blog_view, post_view, coll_view, priv_view = map(
+        fix_links, (home, blog_view, post_view, coll_view, priv_view))
 
     # ——— скрипты ———
     scripts = '\n'.join(read(f'content/{n}.js') for n in ('config', 'collections', 'works', 'posts', 'videos'))
@@ -113,14 +116,15 @@ def build():
     scripts += read('assets/js/post.js') + '\n' + read('assets/js/main.js')
 
     router = '''
-/* ——— роутер: три экрана в одном файле ———
+/* ——— роутер: все страницы сайта в одном файле ———
    #/blog и #/post/<slug> переключают экран, остальные хеши — якоря на главной. */
 (() => {
   'use strict';
   const views = { home: document.getElementById('view-home'),
                   blog: document.getElementById('view-blog'),
                   post: document.getElementById('view-post'),
-                  collections: document.getElementById('view-collections') };
+                  collections: document.getElementById('view-collections'),
+                  privacy: document.getElementById('view-privacy') };
   let current = null;
 
   function show(name) {
@@ -152,6 +156,10 @@ def build():
       if (show('collections')) scrollTo(0, 0);
       return;
     }
+    if (hash.startsWith('#/privacy')) {
+      if (show('privacy')) scrollTo(0, 0);
+      return;
+    }
 
     const switched = show('home');
     const id = hash.replace(/^#\\/?/, '');
@@ -165,21 +173,24 @@ def build():
 })();
 '''
 
+    # заголовок и описания берём прямо из index.html: вторая копия в этом
+    # файле уже разошлась с сайтом и тащила в сборку снятые обещания
+    meta = '\n'.join(re.findall(
+        r'<title>.*?</title>|<meta name="description"[^>]*>|<meta property="og:(?:title|description)"[^>]*>',
+        index))
+
     page = f'''<!doctype html>
 <html lang="ru">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Юрич Мебель — кухни на заказ по вашим размерам</title>
-<meta name="description" content="Проектируем и производим кухни на заказ: бесплатный замер и проект, собственное производство, гарантия 3 года. Портфолио работ, расчёт стоимости онлайн.">
-<meta property="og:title" content="Юрич Мебель — создаём пространство жизни">
-<meta property="og:description" content="Кухни на заказ по вашим размерам. Замер и проект бесплатно, гарантия 3 года.">
+{meta}
 <meta property="og:type" content="website">
 <link rel="icon" href="{static['assets/img/favicon.svg']}" type="image/svg+xml">
 <style>
 {css}
 </style>
-<noscript><style>#view-blog,#view-post,#view-collections{{display:none}}</style></noscript>
+<noscript><style>#view-blog,#view-post,#view-collections,#view-privacy{{display:none}}</style></noscript>
 <script>
 /* Сторож анимаций. В одном файле скрипт идёт последним и на мобильном
    интернете доезжает секунд через десять — всё это время страница не должна
@@ -202,6 +213,7 @@ def build():
   <div id="view-blog" hidden>{blog_view}</div>
   <div id="view-post" hidden>{post_view}</div>
   <div id="view-collections" hidden>{coll_view}</div>
+  <div id="view-privacy" hidden>{priv_view}</div>
 </main>
 {tail}
 <script>

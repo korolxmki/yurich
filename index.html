@@ -258,12 +258,28 @@
         <p class="calc__after">Окончательная стоимость — после утверждения материалов и функционала.</p>
       </div>
 
-      <a class="btn calc__send" id="leadTelegram" href="#" target="_blank" rel="noopener">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.9 4.3 18.8 19c-.2 1-.9 1.3-1.7.8l-4.7-3.5-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.8 8.8-8c.4-.3-.1-.5-.6-.2L6.8 13.1 2.1 11.6c-1-.3-1-1 .2-1.5l18.2-7c.9-.3 1.6.2 1.4 1.2Z"/></svg>
-        Обсудить в Telegram
-      </a>
-      <p class="calc__hint">Откроется личный чат, расчёт уже будет вписан в сообщение — останется нажать «Отправить».
-        Телефон оставлять не нужно.</p>
+      <form class="calc__lead" id="leadForm" novalidate>
+        <div class="field">
+          <label for="leadName">Имя</label>
+          <input id="leadName" name="name" type="text" autocomplete="name" placeholder="Как к вам обращаться" required>
+        </div>
+        <div class="field">
+          <label for="leadPhone">Телефон</label>
+          <input id="leadPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 ___ ___-__-__" required>
+        </div>
+        <label class="consent">
+          <input type="checkbox" id="leadConsent" name="consent" required>
+          <span>Даю согласие на обработку персональных данных и принимаю
+            <a href="privacy.html" target="_blank" rel="noopener">политику конфиденциальности</a></span>
+        </label>
+        <button class="btn calc__send" type="submit">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.9 4.3 18.8 19c-.2 1-.9 1.3-1.7.8l-4.7-3.5-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.8 8.8-8c.4-.3-.1-.5-.6-.2L6.8 13.1 2.1 11.6c-1-.3-1-1 .2-1.5l18.2-7c.9-.3 1.6.2 1.4 1.2Z"/></svg>
+          Отправить в Telegram
+        </button>
+      </form>
+      <p class="form__status" id="leadStatus" role="status"></p>
+      <p class="calc__hint">Откроется личный чат с мастерской: имя, телефон и расчёт уже будут вписаны в сообщение —
+        останется нажать «Отправить».</p>
       <p class="calc__note">Цена действует для кухонь высотой до 2,40 м. Антресоль, кухня в потолок и нестандартные
         решения считаем отдельно, шпон и массив — тоже. Расчёт предварительный и не является офертой: точную смету
         считаем после замера.</p>
@@ -388,9 +404,15 @@
         <li data-site="address">г. Город, ул. Примерная, 1</li><li data-site="hours">Пн–Сб, 9:00–20:00</li>
       </ul></div>
     </div>
+    <div class="footer__legal">
+      <span data-site="legalName">Индивидуальный предприниматель Ворожейкин Сергей Юрьевич</span>
+      <span>ИНН <span data-site="inn">501106131143</span></span>
+      <span>ОГРНИП <span data-site="ogrnip">326527500139861</span></span>
+      <span data-site="legalAddress">607101, Нижегородская обл., г. Навашино, ул. Мичурина, д. 10</span>
+    </div>
     <div class="footer__bottom">
       <span>© <span id="year">2026</span> Юрич Мебель. Создаём пространство жизни.</span>
-      <span>Не является публичной офертой</span>
+      <span><a href="privacy.html">Политика конфиденциальности</a> · Не является публичной офертой</span>
     </div>
   </div>
 </footer>

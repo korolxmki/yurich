@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Политика конфиденциальности — Юрич Мебель</title>
+<meta name="description" content="Политика обработки персональных данных сайта «Юрич Мебель».">
+<meta name="robots" content="noindex">
+<meta property="og:title" content="Коллекции кухонь — Юрич Мебель">
+<meta property="og:description" content="Коллекции кухонь на заказ: матовая эмаль, дерево и камень, глубокий цвет, графит, классика, глянец. Цены за метр и фотографии.">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<script>
+/* Сторож анимаций. Прятать контент до прокрутки можно только тогда, когда
+   скрипт сайта точно работает. Класс снимаем, если скрипт упал или не успел
+   за 2,5 с — тогда страница просто показывает всё сразу, без анимаций.
+   Без этого любая осечка в JS оставляла от сайта один первый экран. */
+(function (d) {
+  d.classList.add('anim');
+  var off = function () { d.classList.remove('anim'); };
+  addEventListener('error', function (e) {
+    var t = e.target;
+    if (t === window || (t && t.tagName === 'SCRIPT')) off();
+  }, true);
+  setTimeout(function () { if (!window.__revealReady) off(); }, 2500);
+})(document.documentElement);
+</script>
+<link rel="stylesheet" href="assets/css/fonts.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<!-- ШАПКА -->
+<header class="header" id="top">
+  <div class="wrap header__inner">
+    <a class="logo" href="./#top" aria-label="Юрич Мебель — на главную">
+      <svg class="logo__mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path d="M27 5c0 11-6.8 17.5-15.6 17.5H7C7 11.5 13.8 5 22.6 5H27Z" fill="currentColor"/>
+        <path d="M5 28c2.5-7.8 7.3-13.2 14-16.4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span class="logo__text">Юрич Мебель</span>
+    </a>
+
+    <nav class="nav" id="nav">
+      <a href="./">Главная</a>
+      <a href="collections.html">Коллекции</a>
+      <a href="./#portfolio">Работы</a>
+      <a href="blog.html">Блог</a>
+      <a href="./#contacts">Контакты</a>
+    </nav>
+
+    <div class="header__side">
+      <!-- ЗАМЕНИТЕ телефон на реальный (см. README) -->
+      <a class="header__phone" href="tel:+79991234567" data-site="tel">+7 999 123-45-67</a>
+      <button class="burger" id="burger" aria-label="Меню" aria-expanded="false" aria-controls="nav">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<section class="section">
+  <div class="wrap">
+    <div class="doc reveal">
+      <p class="eyebrow">Документы</p>
+      <h1 class="display">Политика конфиденциальности</h1>
+      <p class="lead">Как сайт «Юрич Мебель» обращается с персональными данными: что собирает, зачем,
+        куда они уходят и как отозвать согласие.</p>
+
+      <h2>1. Кто обрабатывает данные</h2>
+      <p>Оператор персональных данных — <b data-site="legalName">Индивидуальный предприниматель Ворожейкин Сергей Юрьевич</b>.</p>
+      <ul>
+        <li>ИНН: <span data-site="inn">501106131143</span></li>
+        <li>ОГРНИП: <span data-site="ogrnip">326527500139861</span></li>
+        <li>Адрес: <span data-site="legalAddress">607101, Нижегородская обл., г. Навашино, ул. Мичурина, д. 10</span></li>
+        <li>Телефон: <a href="tel:+79991234567" data-site="tel">+7 999 123-45-67</a></li>
+        <li>Почта: <a href="mailto:info@example.com" data-site="mail">info@example.com</a></li>
+      </ul>
+
+      <h2>2. Какие данные собираются</h2>
+      <p>Только то, что вы сами вписываете в форму расчёта: <b>имя</b> и <b>номер телефона</b>. Вместе с ними
+        в сообщение подставляется результат расчёта — длина кухни и примерная сумма.</p>
+      <p>Сайт не просит паспортных данных, адреса проживания, сведений о здоровье и других особых категорий
+        персональных данных. Специальные и биометрические данные не обрабатываются.</p>
+
+      <h2>3. Зачем они нужны</h2>
+      <p>Чтобы связаться с вами по заявке: уточнить размеры, согласовать замер и ответить на вопросы.
+        Для другого эти данные не используются. Рассылок сайт не ведёт и третьим лицам данные не передаёт.</p>
+
+      <h2>4. Куда они уходят</h2>
+      <p>Это важная особенность, и её стоит понимать буквально. Сайт статический: у него нет сервера, базы
+        данных и личного кабинета, он физически не может ничего сохранить. Имя и телефон, которые вы ввели,
+        подставляются в текст сообщения в Telegram, и <b>отправляете его вы сами</b> из своего аккаунта —
+        кнопка лишь открывает чат с уже готовым текстом.</p>
+      <p>То есть данные попадают в переписку между вами и мастерской в Telegram. На стороне сайта они
+        не сохраняются и никуда больше не передаются. Дальнейшее хранение переписки подчиняется правилам
+        Telegram и вашим собственным настройкам.</p>
+
+      <h2>5. Основание обработки</h2>
+      <p>Ваше согласие. Оно даётся галочкой под формой — без неё заявка не отправляется. Галочка
+        не проставлена заранее: её нужно поставить самому.</p>
+
+      <h2>6. Сколько данные хранятся</h2>
+      <p>Столько, сколько нужно для работы по заявке, и не дольше трёх лет с последнего обращения.
+        Хранятся они в переписке в Telegram и в рабочих записях мастерской.</p>
+
+      <h2>7. Ваши права</h2>
+      <p>Вы можете запросить, какие ваши данные есть у мастерской, попросить их исправить или удалить,
+        а также отозвать согласие в любой момент. Для этого достаточно написать в тот же чат в Telegram,
+        позвонить или отправить письмо на почту из первого раздела. Запрос выполняется в течение
+        тридцати дней.</p>
+
+      <h2>8. Файлы cookie и статистика</h2>
+      <p>Сайт не ставит собственных cookie и не подключает счётчики аналитики. В блоке «Видео» встроен
+        проигрыватель Instagram — он загружается только когда вы доскроллите до него, и дальше работает
+        по правилам Instagram, а не этого сайта.</p>
+
+      <h2>9. Изменения</h2>
+      <p>Политика может обновляться. Действующая редакция всегда лежит по этому адресу, дата последнего
+        изменения — <time datetime="2026-10-15">15 октября 2026 года</time>.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ПОДВАЛ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__top">
+      <div>
+        <a class="logo" href="./">
+          <svg class="logo__mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <path d="M27 5c0 11-6.8 17.5-15.6 17.5H7C7 11.5 13.8 5 22.6 5H27Z" fill="currentColor"/>
+            <path d="M5 28c2.5-7.8 7.3-13.2 14-16.4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span class="logo__text">Юрич Мебель</span>
+        </a>
+        <p style="color:rgba(255,255,255,.62);font-size:15px;margin:16px 0 0;max-width:30ch">Кухни и корпусная мебель на заказ. Гарантия 2 года.</p>
+        <div class="socials">
+          <a href="#" data-site="telegram" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.9 4.3 18.8 19c-.2 1-.9 1.3-1.7.8l-4.7-3.5-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.8 8.8-8c.4-.3-.1-.5-.6-.2L6.8 13.1 2.1 11.6c-1-.3-1-1 .2-1.5l18.2-7c.9-.3 1.6.2 1.4 1.2Z"/></svg></a>
+          <a href="#" data-site="whatsapp" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2Zm5.5 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-1.7-.1-.4-.1-.9-.3-1.6-.6-2.7-1.2-4.5-4-4.6-4.2-.1-.2-1.1-1.4-1.1-2.7s.7-1.9.9-2.2c.2-.2.5-.3.6-.3h.5c.2 0 .4 0 .6.4l.8 2c.1.2.1.3 0 .5l-.3.5-.3.3c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.1 1 2 1.3 2.3 1.4.3.1.4.1.6-.1l.8-1c.2-.2.4-.2.6-.1l2 1c.2.1.4.2.4.3.1.2.1.6-.1 1.1Z"/></svg></a>
+          <a href="#" data-site="vk" aria-label="ВКонтакте"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.8 17c-5 0-8.2-3.5-8.3-9.4h2.6c.1 4.3 2 6.1 3.5 6.5V7.6h2.4v3.7c1.4-.2 2.9-1.8 3.4-3.7h2.4c-.4 2.3-2 4-3.1 4.6 1.1.5 3 2 3.7 4.8h-2.7c-.6-1.8-1.9-3.2-3.7-3.4V17h-.2Z"/></svg></a>
+        </div>
+      </div>
+      <div><h4>Разделы</h4><ul>
+        <li><a href="./#portfolio">Работы</a></li><li><a href="./#steps">Как мы работаем</a></li>
+        <li><a href="./#calc">Заказать расчёт</a></li><li><a href="./#about">О мастерской</a></li>
+      </ul></div>
+      <div><h4>Блог</h4><ul id="footerPosts"></ul></div>
+      <div><h4>Контакты</h4><ul>
+        <li><a href="tel:+79991234567" data-site="tel">+7 999 123-45-67</a></li>
+        <li><a href="mailto:info@example.com" data-site="mail">info@example.com</a></li>
+        <li data-site="address">г. Город, ул. Примерная, 1</li><li data-site="hours">Пн–Сб, 9:00–20:00</li>
+      </ul></div>
+    </div>
+    <div class="footer__legal">
+      <span data-site="legalName">Индивидуальный предприниматель Ворожейкин Сергей Юрьевич</span>
+      <span>ИНН <span data-site="inn">501106131143</span></span>
+      <span>ОГРНИП <span data-site="ogrnip">326527500139861</span></span>
+      <span data-site="legalAddress">607101, Нижегородская обл., г. Навашино, ул. Мичурина, д. 10</span>
+    </div>
+    <div class="footer__bottom">
+      <span>© <span id="year">2026</span> Юрич Мебель. Создаём пространство жизни.</span>
+      <span><a href="privacy.html">Политика конфиденциальности</a> · Не является публичной офертой</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ЛАЙТБОКС -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Просмотр фотографии">
+  <button class="lightbox__btn lightbox__close" id="lbClose" aria-label="Закрыть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 6 12 12M18 6 6 18" stroke-linecap="round"/></svg></button>
+  <button class="lightbox__btn lightbox__prev" id="lbPrev" aria-label="Предыдущая"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m14 5-7 7 7 7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <button class="lightbox__btn lightbox__next" id="lbNext" aria-label="Следующая"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m10 5 7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <div><img id="lbImg" alt=""><p class="lightbox__cap" id="lbCap"></p></div>
+</div>
+
+<script src="content/config.js"></script>
+<script src="content/collections.js"></script>
+<script src="content/works.js"></script>
+<script src="content/posts.js"></script>
+<script src="content/videos.js"></script>
+<script src="assets/js/main.js" defer></script>
+</body>
+</html>

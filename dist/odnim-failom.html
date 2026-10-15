@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Юрич Мебель — кухни на заказ по вашим размерам</title>
-<meta name="description" content="Проектируем и производим кухни на заказ: бесплатный замер и проект, собственное производство, гарантия 3 года. Портфолио работ, расчёт стоимости онлайн.">
+<title>Юрич Мебель — кухни и корпусная мебель на заказ</title>
+<meta name="description" content="Кухни и корпусная мебель на заказ по вашим размерам: 82 000 ₽ за метр под ключ, гарантия 2 года. Портфолио работ и расчёт стоимости онлайн.">
 <meta property="og:title" content="Юрич Мебель — создаём пространство жизни">
-<meta property="og:description" content="Кухни на заказ по вашим размерам. Замер и проект бесплатно, гарантия 3 года.">
+<meta property="og:description" content="Кухни и корпусная мебель на заказ по вашим размерам. 82 000 ₽ за метр под ключ, гарантия 2 года.">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+CiAgPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iI0YyRjhFQyIvPgogIDxwYXRoIGQ9Ik0yNiA2YzAgMTAuNS02LjUgMTYuNi0xNC44IDE2LjZIN0M3IDEyLjEgMTMuNSA2IDIxLjggNkgyNloiIGZpbGw9IiMzQzg1NTgiLz4KICA8cGF0aCBkPSJNNS41IDI3YzIuNC03LjQgNi45LTEyLjUgMTMuMy0xNS42IiBzdHJva2U9IiMzQzg1NTgiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBmaWxsPSJub25lIi8+Cjwvc3ZnPgo=" type="image/svg+xml">
 <style>
@@ -495,12 +495,14 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
 /* кнопка в Telegram вместо формы: заявка уходит в личку, полей нет */
 .calc__send{width:100%;justify-content:center;gap:11px;height:auto;padding-block:16px;font-size:15px}
 .calc__hint{margin:14px 0 0;font-size:13.5px;color:var(--muted);text-align:center;max-width:52ch;justify-self:center}
-.calc__lead{display:grid;gap:15px;grid-template-columns:1fr 1fr auto;align-items:end}
-.calc__lead > *{min-width:0}   /* то же самое: без этого кнопка распирает форму */
-.calc__lead .btn{height:var(--control-h);white-space:nowrap}   /* та же высота, что у полей */
+/* Имя и телефон рядом, согласие и кнопка — во всю ширину под ними.
+   min-width:0 обязателен: без него поле не ужимается ниже своей «родной»
+   ширины и распирает форму на узком экране. */
+.calc__lead{display:grid;gap:15px;grid-template-columns:1fr 1fr;align-items:end}
+.calc__lead > *{min-width:0}
+.calc__lead .btn{grid-column:1/-1}
 @media (max-width:720px){.calc__lead{grid-template-columns:1fr}}
 /* на совсем узких экранах кнопке разрешаем перенос — иначе она шире окна */
-@media (max-width:360px){.calc__lead .btn{white-space:normal;height:auto;padding-block:13px}}
 .calc__note{margin:0;font-size:12.5px;color:var(--muted);text-align:center;max-width:56ch;justify-self:center}
 
 /* ——— о компании ——— */
@@ -544,6 +546,28 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
 .footer h4{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.5);margin:0 0 15px;font-weight:700}
 .footer ul{list-style:none;margin:0;padding:0;display:grid;gap:10px;font-size:15px}
 .footer__bottom{display:flex;flex-wrap:wrap;gap:14px 30px;justify-content:space-between;padding-top:24px;font-size:13.5px;color:rgba(255,255,255,.55)}
+.footer__bottom a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.footer__bottom a:hover{color:#fff}
+/* согласие на обработку данных: галочка и ссылка на политику */
+.consent{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;
+  font-size:13.5px;color:var(--muted);line-height:1.45;cursor:pointer;grid-column:1/-1}
+.consent input{width:19px;height:19px;margin:1px 0 0;accent-color:var(--green);flex:none;cursor:pointer}
+.consent a{color:var(--green);text-decoration:underline;text-underline-offset:2px}
+
+/* реквизиты в подвале */
+.footer__legal{display:flex;flex-wrap:wrap;gap:6px 22px;padding-top:26px;
+  font-size:12.5px;color:rgba(255,255,255,.44);line-height:1.5}
+
+/* страница документа: политика конфиденциальности */
+.doc{max-width:70ch;overflow-wrap:break-word}
+/* заголовок документа — не плакатный: «конфиденциальности» одним словом
+   в крупном кегле не помещается на телефоне и распирает страницу */
+.doc h1{font-size:clamp(26px,4.6vw,44px);margin-bottom:18px}
+.doc h2{font-size:clamp(19px,2.1vw,23px);margin:34px 0 12px}
+.doc p{margin:0 0 13px;color:var(--ink-2);line-height:1.65}
+.doc ul{margin:0 0 13px;padding-left:20px;color:var(--ink-2);line-height:1.75}
+.doc a{color:var(--green);text-decoration:underline;text-underline-offset:2px}
+
 .socials{display:flex;gap:10px;margin-top:18px}
 .socials a{width:40px;height:40px;border-radius:12px;border:1px solid rgba(255,255,255,.2);display:grid;place-items:center;transition:.25s var(--ease)}
 .socials a:hover{background:var(--green);border-color:var(--green);transform:translateY(-2px)}
@@ -651,7 +675,7 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
 }
 
 </style>
-<noscript><style>#view-blog,#view-post,#view-collections{display:none}</style></noscript>
+<noscript><style>#view-blog,#view-post,#view-collections,#view-privacy{display:none}</style></noscript>
 <script>
 /* Сторож анимаций. В одном файле скрипт идёт последним и на мобильном
    интернете доезжает секунд через десять — всё это время страница не должна
@@ -898,12 +922,28 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
         <p class="calc__after">Окончательная стоимость — после утверждения материалов и функционала.</p>
       </div>
 
-      <a class="btn calc__send" id="leadTelegram" href="#" target="_blank" rel="noopener">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.9 4.3 18.8 19c-.2 1-.9 1.3-1.7.8l-4.7-3.5-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.8 8.8-8c.4-.3-.1-.5-.6-.2L6.8 13.1 2.1 11.6c-1-.3-1-1 .2-1.5l18.2-7c.9-.3 1.6.2 1.4 1.2Z"/></svg>
-        Обсудить в Telegram
-      </a>
-      <p class="calc__hint">Откроется личный чат, расчёт уже будет вписан в сообщение — останется нажать «Отправить».
-        Телефон оставлять не нужно.</p>
+      <form class="calc__lead" id="leadForm" novalidate>
+        <div class="field">
+          <label for="leadName">Имя</label>
+          <input id="leadName" name="name" type="text" autocomplete="name" placeholder="Как к вам обращаться" required>
+        </div>
+        <div class="field">
+          <label for="leadPhone">Телефон</label>
+          <input id="leadPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 ___ ___-__-__" required>
+        </div>
+        <label class="consent">
+          <input type="checkbox" id="leadConsent" name="consent" required>
+          <span>Даю согласие на обработку персональных данных и принимаю
+            <a href="#/privacy" target="_blank" rel="noopener">политику конфиденциальности</a></span>
+        </label>
+        <button class="btn calc__send" type="submit">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.9 4.3 18.8 19c-.2 1-.9 1.3-1.7.8l-4.7-3.5-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.8 8.8-8c.4-.3-.1-.5-.6-.2L6.8 13.1 2.1 11.6c-1-.3-1-1 .2-1.5l18.2-7c.9-.3 1.6.2 1.4 1.2Z"/></svg>
+          Отправить в Telegram
+        </button>
+      </form>
+      <p class="form__status" id="leadStatus" role="status"></p>
+      <p class="calc__hint">Откроется личный чат с мастерской: имя, телефон и расчёт уже будут вписаны в сообщение —
+        останется нажать «Отправить».</p>
       <p class="calc__note">Цена действует для кухонь высотой до 2,40 м. Антресоль, кухня в потолок и нестандартные
         решения считаем отдельно, шпон и массив — тоже. Расчёт предварительный и не является офертой: точную смету
         считаем после замера.</p>
@@ -1097,6 +1137,72 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
 </section>
 
 </div>
+  <div id="view-privacy" hidden>
+
+<section class="section">
+  <div class="wrap">
+    <div class="doc reveal">
+      <p class="eyebrow">Документы</p>
+      <h1 class="display">Политика конфиденциальности</h1>
+      <p class="lead">Как сайт «Юрич Мебель» обращается с персональными данными: что собирает, зачем,
+        куда они уходят и как отозвать согласие.</p>
+
+      <h2>1. Кто обрабатывает данные</h2>
+      <p>Оператор персональных данных — <b data-site="legalName">Индивидуальный предприниматель Ворожейкин Сергей Юрьевич</b>.</p>
+      <ul>
+        <li>ИНН: <span data-site="inn">501106131143</span></li>
+        <li>ОГРНИП: <span data-site="ogrnip">326527500139861</span></li>
+        <li>Адрес: <span data-site="legalAddress">607101, Нижегородская обл., г. Навашино, ул. Мичурина, д. 10</span></li>
+        <li>Телефон: <a href="tel:+79991234567" data-site="tel">+7 999 123-45-67</a></li>
+        <li>Почта: <a href="mailto:info@example.com" data-site="mail">info@example.com</a></li>
+      </ul>
+
+      <h2>2. Какие данные собираются</h2>
+      <p>Только то, что вы сами вписываете в форму расчёта: <b>имя</b> и <b>номер телефона</b>. Вместе с ними
+        в сообщение подставляется результат расчёта — длина кухни и примерная сумма.</p>
+      <p>Сайт не просит паспортных данных, адреса проживания, сведений о здоровье и других особых категорий
+        персональных данных. Специальные и биометрические данные не обрабатываются.</p>
+
+      <h2>3. Зачем они нужны</h2>
+      <p>Чтобы связаться с вами по заявке: уточнить размеры, согласовать замер и ответить на вопросы.
+        Для другого эти данные не используются. Рассылок сайт не ведёт и третьим лицам данные не передаёт.</p>
+
+      <h2>4. Куда они уходят</h2>
+      <p>Это важная особенность, и её стоит понимать буквально. Сайт статический: у него нет сервера, базы
+        данных и личного кабинета, он физически не может ничего сохранить. Имя и телефон, которые вы ввели,
+        подставляются в текст сообщения в Telegram, и <b>отправляете его вы сами</b> из своего аккаунта —
+        кнопка лишь открывает чат с уже готовым текстом.</p>
+      <p>То есть данные попадают в переписку между вами и мастерской в Telegram. На стороне сайта они
+        не сохраняются и никуда больше не передаются. Дальнейшее хранение переписки подчиняется правилам
+        Telegram и вашим собственным настройкам.</p>
+
+      <h2>5. Основание обработки</h2>
+      <p>Ваше согласие. Оно даётся галочкой под формой — без неё заявка не отправляется. Галочка
+        не проставлена заранее: её нужно поставить самому.</p>
+
+      <h2>6. Сколько данные хранятся</h2>
+      <p>Столько, сколько нужно для работы по заявке, и не дольше трёх лет с последнего обращения.
+        Хранятся они в переписке в Telegram и в рабочих записях мастерской.</p>
+
+      <h2>7. Ваши права</h2>
+      <p>Вы можете запросить, какие ваши данные есть у мастерской, попросить их исправить или удалить,
+        а также отозвать согласие в любой момент. Для этого достаточно написать в тот же чат в Telegram,
+        позвонить или отправить письмо на почту из первого раздела. Запрос выполняется в течение
+        тридцати дней.</p>
+
+      <h2>8. Файлы cookie и статистика</h2>
+      <p>Сайт не ставит собственных cookie и не подключает счётчики аналитики. В блоке «Видео» встроен
+        проигрыватель Instagram — он загружается только когда вы доскроллите до него, и дальше работает
+        по правилам Instagram, а не этого сайта.</p>
+
+      <h2>9. Изменения</h2>
+      <p>Политика может обновляться. Действующая редакция всегда лежит по этому адресу, дата последнего
+        изменения — <time datetime="2026-10-15">15 октября 2026 года</time>.</p>
+    </div>
+  </div>
+</section>
+
+</div>
 </main>
 <!-- ПОДВАЛ -->
 <footer class="footer">
@@ -1128,9 +1234,15 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
         <li data-site="address">г. Город, ул. Примерная, 1</li><li data-site="hours">Пн–Сб, 9:00–20:00</li>
       </ul></div>
     </div>
+    <div class="footer__legal">
+      <span data-site="legalName">Индивидуальный предприниматель Ворожейкин Сергей Юрьевич</span>
+      <span>ИНН <span data-site="inn">501106131143</span></span>
+      <span>ОГРНИП <span data-site="ogrnip">326527500139861</span></span>
+      <span data-site="legalAddress">607101, Нижегородская обл., г. Навашино, ул. Мичурина, д. 10</span>
+    </div>
     <div class="footer__bottom">
       <span>© <span id="year">2026</span> Юрич Мебель. Создаём пространство жизни.</span>
-      <span>Не является публичной офертой</span>
+      <span><a href="#/privacy">Политика конфиденциальности</a> · Не является публичной офертой</span>
     </div>
   </div>
 </footer>
@@ -1152,6 +1264,16 @@ window.SITE = {
      По этой ставке считаются все материалы, кроме шпона и массива — их,
      как и антресоль, кухню в потолок и нестандарт, считают отдельно. */
   pricePerMeter: 82000,
+
+  /* — РЕКВИЗИТЫ —
+     Подставляются в подвал и в политику конфиденциальности. Банковские
+     реквизиты сюда намеренно не вынесены: расчётному счёту не место на
+     лендинге, он нужен в счетах и договоре. */
+  legalName:    'Индивидуальный предприниматель Ворожейкин Сергей Юрьевич',
+  legalShort:   'ИП Ворожейкин С. Ю.',
+  inn:          '501106131143',
+  ogrnip:       '326527500139861',
+  legalAddress: '607101, Нижегородская обл., г. Навашино, ул. Мичурина, д. 10',
 
   // — контакты —
   phone:    '+7 999 123-45-67',        // как показывать на сайте
@@ -1924,7 +2046,6 @@ function calculate() {
   $('#lengthOut').textContent = length.toFixed(1).replace('.', ',');
   tweenMoney($('#sumTotal'), total);
   lastEstimate = `${money(total)} · ${length.toFixed(1).replace('.', ',')} м по фронту`;
-  updateTelegramLink();
 }
 calcForm?.addEventListener('input', calculate);
 calculate();
@@ -1938,6 +2059,11 @@ function applyConfig() {
   if (cfg.email)   set('[data-site="mail"]', a => { a.href = 'mailto:' + cfg.email; a.textContent = cfg.email; });
   if (cfg.address) set('[data-site="address"]', el => { el.textContent = cfg.address; });
   if (cfg.hours)   set('[data-site="hours"]', el => { el.textContent = cfg.hours; });
+
+  // реквизиты — в подвал и в политику конфиденциальности из одного места
+  ['legalName', 'legalShort', 'inn', 'ogrnip', 'legalAddress'].forEach(key => {
+    if (cfg[key]) set(`[data-site="${key}"]`, el => { el.textContent = cfg[key]; });
+  });
 
   const social = {
     whatsapp: cfg.whatsapp ? 'https://wa.me/' + cfg.whatsapp.replace(/\D/g, '') : '',
@@ -1954,10 +2080,14 @@ function applyConfig() {
 applyConfig();
 
 /* ——— заявка ———
-   Ни имени, ни телефона не спрашиваем: заявка уходит в личку в Telegram, и
-   кто написал — там и так видно. Расчёт подставляем прямо в текст сообщения,
-   чтобы человеку осталось нажать «Отправить». Персональных данных сайт не
-   собирает вовсе, поэтому не нужно ни согласия, ни обработчика форм. */
+   Имя и телефон собираем формой, а уходят они в личку в Telegram: сайт
+   статический, своего сервера у него нет и хранить он ничего не может.
+   Поэтому данные не отправляются никуда с сайта — они подставляются в текст
+   сообщения, и человек отправляет его сам из своего Telegram. Так и написано
+   в политике конфиденциальности.
+
+   Галочку согласия проверяем своим кодом, а не одним только required:
+   браузерная подсказка у чекбокса легко уезжает за край экрана. */
 function telegramUser() {
   return (cfg.telegram || '').trim()
     .replace(/^https?:\/\/(www\.)?t\.me\//i, '')
@@ -1965,18 +2095,35 @@ function telegramUser() {
     .replace(/[/?#].*$/, '');
 }
 
-function updateTelegramLink() {
-  const link = $('#leadTelegram');
-  if (!link) return;
-  const user = telegramUser();
-  if (!user) return link.remove();   // не настроен — лучше ничего, чем битая кнопка
-  const text = [
-    'Здравствуйте! Пишу с сайта «Юрич Мебель».',
-    lastEstimate ? `Мой расчёт: ${lastEstimate}` : '',
-    'Хочу обсудить заказ.',
-  ].filter(Boolean).join('\n');
-  link.href = `https://t.me/${user}?text=${encodeURIComponent(text)}`;
+function say(el, msg, isError) {
+  if (!el) return;
+  el.style.color = isError ? '#C0392B' : '';
+  el.textContent = msg;
 }
+
+$('#leadForm')?.addEventListener('submit', e => {
+  e.preventDefault();
+  const status = $('#leadStatus');
+  const name = $('#leadName').value.trim();
+  const phone = $('#leadPhone').value.trim();
+
+  if (name.length < 2)                      return say(status, 'Укажите, как к вам обращаться.', true);
+  if (phone.replace(/\D/g, '').length < 10) return say(status, 'Проверьте номер телефона.', true);
+  if (!$('#leadConsent').checked)           return say(status, 'Нужно согласие на обработку персональных данных.', true);
+
+  const user = telegramUser();
+  if (!user) return say(status, `Напишите или позвоните: ${cfg.phone || ''}`, true);
+
+  const text = [
+    'Здравствуйте! Заявка с сайта «Юрич Мебель».',
+    `Имя: ${name}`,
+    `Телефон: ${phone}`,
+    lastEstimate ? `Расчёт: ${lastEstimate}` : '',
+  ].filter(Boolean).join('\n');
+
+  open(`https://t.me/${user}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
+  say(status, 'Открыли Telegram с готовым сообщением — осталось нажать «Отправить».');
+});
 
 /* ——— мелочи ——— */
 const year = $('#year');
@@ -2002,14 +2149,15 @@ if (year) year.textContent = String(new Date().getFullYear());
 })();
 
 
-/* ——— роутер: три экрана в одном файле ———
+/* ——— роутер: все страницы сайта в одном файле ———
    #/blog и #/post/<slug> переключают экран, остальные хеши — якоря на главной. */
 (() => {
   'use strict';
   const views = { home: document.getElementById('view-home'),
                   blog: document.getElementById('view-blog'),
                   post: document.getElementById('view-post'),
-                  collections: document.getElementById('view-collections') };
+                  collections: document.getElementById('view-collections'),
+                  privacy: document.getElementById('view-privacy') };
   let current = null;
 
   function show(name) {
@@ -2039,6 +2187,10 @@ if (year) year.textContent = String(new Date().getFullYear());
     }
     if (hash.startsWith('#/collections')) {
       if (show('collections')) scrollTo(0, 0);
+      return;
+    }
+    if (hash.startsWith('#/privacy')) {
+      if (show('privacy')) scrollTo(0, 0);
       return;
     }
 

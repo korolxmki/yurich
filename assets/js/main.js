@@ -442,7 +442,6 @@ function calculate() {
   $('#lengthOut').textContent = length.toFixed(1).replace('.', ',');
   tweenMoney($('#sumTotal'), total);
   lastEstimate = `${money(total)} · ${length.toFixed(1).replace('.', ',')} м по фронту`;
-  updateTelegramLink();
 }
 calcForm?.addEventListener('input', calculate);
 calculate();
@@ -456,6 +455,11 @@ function applyConfig() {
   if (cfg.email)   set('[data-site="mail"]', a => { a.href = 'mailto:' + cfg.email; a.textContent = cfg.email; });
   if (cfg.address) set('[data-site="address"]', el => { el.textContent = cfg.address; });
   if (cfg.hours)   set('[data-site="hours"]', el => { el.textContent = cfg.hours; });
+
+  // реквизиты — в подвал и в политику конфиденциальности из одного места
+  ['legalName', 'legalShort', 'inn', 'ogrnip', 'legalAddress'].forEach(key => {
+    if (cfg[key]) set(`[data-site="${key}"]`, el => { el.textContent = cfg[key]; });
+  });
 
   const social = {
     whatsapp: cfg.whatsapp ? 'https://wa.me/' + cfg.whatsapp.replace(/\D/g, '') : '',
@@ -472,10 +476,14 @@ function applyConfig() {
 applyConfig();
 
 /* ——— заявка ———
-   Ни имени, ни телефона не спрашиваем: заявка уходит в личку в Telegram, и
-   кто написал — там и так видно. Расчёт подставляем прямо в текст сообщения,
-   чтобы человеку осталось нажать «Отправить». Персональных данных сайт не
-   собирает вовсе, поэтому не нужно ни согласия, ни обработчика форм. */
+   Имя и телефон собираем формой, а уходят они в личку в Telegram: сайт
+   статический, своего сервера у него нет и хранить он ничего не может.
+   Поэтому данные не отправляются никуда с сайта — они подставляются в текст
+   сообщения, и человек отправляет его сам из своего Telegram. Так и написано
+   в политике конфиденциальности.
+
+   Галочку согласия проверяем своим кодом, а не одним только required:
+   браузерная подсказка у чекбокса легко уезжает за край экрана. */
 function telegramUser() {
   return (cfg.telegram || '').trim()
     .replace(/^https?:\/\/(www\.)?t\.me\//i, '')
@@ -483,18 +491,35 @@ function telegramUser() {
     .replace(/[/?#].*$/, '');
 }
 
-function updateTelegramLink() {
-  const link = $('#leadTelegram');
-  if (!link) return;
-  const user = telegramUser();
-  if (!user) return link.remove();   // не настроен — лучше ничего, чем битая кнопка
-  const text = [
-    'Здравствуйте! Пишу с сайта «Юрич Мебель».',
-    lastEstimate ? `Мой расчёт: ${lastEstimate}` : '',
-    'Хочу обсудить заказ.',
-  ].filter(Boolean).join('\n');
-  link.href = `https://t.me/${user}?text=${encodeURIComponent(text)}`;
+function say(el, msg, isError) {
+  if (!el) return;
+  el.style.color = isError ? '#C0392B' : '';
+  el.textContent = msg;
 }
+
+$('#leadForm')?.addEventListener('submit', e => {
+  e.preventDefault();
+  const status = $('#leadStatus');
+  const name = $('#leadName').value.trim();
+  const phone = $('#leadPhone').value.trim();
+
+  if (name.length < 2)                      return say(status, 'Укажите, как к вам обращаться.', true);
+  if (phone.replace(/\D/g, '').length < 10) return say(status, 'Проверьте номер телефона.', true);
+  if (!$('#leadConsent').checked)           return say(status, 'Нужно согласие на обработку персональных данных.', true);
+
+  const user = telegramUser();
+  if (!user) return say(status, `Напишите или позвоните: ${cfg.phone || ''}`, true);
+
+  const text = [
+    'Здравствуйте! Заявка с сайта «Юрич Мебель».',
+    `Имя: ${name}`,
+    `Телефон: ${phone}`,
+    lastEstimate ? `Расчёт: ${lastEstimate}` : '',
+  ].filter(Boolean).join('\n');
+
+  open(`https://t.me/${user}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
+  say(status, 'Открыли Telegram с готовым сообщением — осталось нажать «Отправить».');
+});
 
 /* ——— мелочи ——— */
 const year = $('#year');

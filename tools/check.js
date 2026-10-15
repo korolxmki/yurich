@@ -15,7 +15,7 @@ const { chromium } = require('playwright');
 const http = require('http'), fs = require('fs'), path = require('path');
 
 const WIDTHS = [280, 320, 360, 390, 414, 480, 560, 620, 768, 820, 900, 960, 1024, 1100, 1180, 1280, 1440, 1600, 1920];
-const PAGES = ['index.html', 'collections.html', 'blog.html', 'dist/odnim-failom.html'];
+const PAGES = ['index.html', 'collections.html', 'blog.html', 'privacy.html', 'dist/odnim-failom.html'];
 const ROOT = path.resolve(__dirname, '..');
 const MIME = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
   '.json': 'application/json', '.svg': 'image/svg+xml', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',
