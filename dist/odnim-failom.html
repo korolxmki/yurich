@@ -1011,7 +1011,7 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
     <div class="section-head reveal">
       <div class="section-head__text">
         <p class="eyebrow">Контакты</p>
-        <h2 class="display">Приезжайте или пишите</h2>
+        <h2 class="display">Позвоните или напишите</h2>
         <p class="lead">Ответим в мессенджере в течение рабочего дня. На замер выезжаем в день обращения, если успеваем по графику.</p>
       </div>
     </div>
@@ -1276,14 +1276,14 @@ window.SITE = {
   legalAddress: '607101, Нижегородская обл., г. Навашино, ул. Мичурина, д. 10',
 
   // — контакты —
-  phone:    '+7 999 123-45-67',        // как показывать на сайте
-  phoneRaw: '+79991234567',            // для ссылки «позвонить», только цифры и +
-  email:    'info@example.com',
-  address:  'г. Город, ул. Примерная, 1',
-  hours:    'Пн–Сб, 9:00–20:00',
+  phone:    '+7 986 746-75-52',        // как показывать на сайте
+  phoneRaw: '+79867467552',            // для ссылки «позвонить», только цифры и +
+  email:    'urichservis@gmail.com',
+  address:  '',                        // адрес шоурума; пусто — карточка не показывается
+  hours:    '',                        // часы работы; пусто — карточка не показывается
 
   // — мессенджеры и соцсети (пустая строка — кнопка скроется) —
-  whatsapp: '79991234567',             // номер для wa.me, только цифры
+  whatsapp: '',                        // номер для wa.me, только цифры; пусто — кнопки нет
   telegram: 'urich_promebel',          // @username или ссылка t.me/… — туда уходят заявки
   vk:       '',                        // ссылка на страницу ВКонтакте
 
@@ -2053,17 +2053,26 @@ calculate();
 /* ——— контакты из content/config.js ——— */
 function applyConfig() {
   const set = (sel, fn) => $$(sel).forEach(fn);
-  if (cfg.phoneRaw || cfg.phone) {
-    set('[data-site="tel"]', a => { a.href = 'tel:' + (cfg.phoneRaw || '').replace(/[^\d+]/g, ''); a.textContent = cfg.phone; });
-  }
-  if (cfg.email)   set('[data-site="mail"]', a => { a.href = 'mailto:' + cfg.email; a.textContent = cfg.email; });
-  if (cfg.address) set('[data-site="address"]', el => { el.textContent = cfg.address; });
-  if (cfg.hours)   set('[data-site="hours"]', el => { el.textContent = cfg.hours; });
+
+  /* Значение заполнено — подставляем, пусто — убираем карточку или строку
+     целиком. Раньше пустая настройка просто ничего не делала, и на сайте
+     оставалась рыба из разметки вроде «г. Город, ул. Примерная, 1». */
+  const fill = (key, apply, value = cfg[key]) => set(`[data-site="${key}"]`, el => {
+    if (value) return apply(el, value);
+    (el.closest('.contact, li') || el).remove();
+  });
+
+  fill('tel', (a) => {
+    a.href = 'tel:' + (cfg.phoneRaw || cfg.phone || '').replace(/[^\d+]/g, '');
+    a.textContent = cfg.phone || cfg.phoneRaw;
+  }, cfg.phoneRaw || cfg.phone);
+  fill('mail', (a, v) => { a.href = 'mailto:' + v; a.textContent = v; }, cfg.email);   // в разметке mail, в настройках email
+  fill('address', (el, v) => { el.textContent = v; });
+  fill('hours', (el, v) => { el.textContent = v; });
 
   // реквизиты — в подвал и в политику конфиденциальности из одного места
-  ['legalName', 'legalShort', 'inn', 'ogrnip', 'legalAddress'].forEach(key => {
-    if (cfg[key]) set(`[data-site="${key}"]`, el => { el.textContent = cfg[key]; });
-  });
+  ['legalName', 'legalShort', 'inn', 'ogrnip', 'legalAddress']
+    .forEach(key => fill(key, (el, v) => { el.textContent = v; }));
 
   const social = {
     whatsapp: cfg.whatsapp ? 'https://wa.me/' + cfg.whatsapp.replace(/\D/g, '') : '',

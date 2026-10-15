@@ -449,17 +449,26 @@ calculate();
 /* ——— контакты из content/config.js ——— */
 function applyConfig() {
   const set = (sel, fn) => $$(sel).forEach(fn);
-  if (cfg.phoneRaw || cfg.phone) {
-    set('[data-site="tel"]', a => { a.href = 'tel:' + (cfg.phoneRaw || '').replace(/[^\d+]/g, ''); a.textContent = cfg.phone; });
-  }
-  if (cfg.email)   set('[data-site="mail"]', a => { a.href = 'mailto:' + cfg.email; a.textContent = cfg.email; });
-  if (cfg.address) set('[data-site="address"]', el => { el.textContent = cfg.address; });
-  if (cfg.hours)   set('[data-site="hours"]', el => { el.textContent = cfg.hours; });
+
+  /* Значение заполнено — подставляем, пусто — убираем карточку или строку
+     целиком. Раньше пустая настройка просто ничего не делала, и на сайте
+     оставалась рыба из разметки вроде «г. Город, ул. Примерная, 1». */
+  const fill = (key, apply, value = cfg[key]) => set(`[data-site="${key}"]`, el => {
+    if (value) return apply(el, value);
+    (el.closest('.contact, li') || el).remove();
+  });
+
+  fill('tel', (a) => {
+    a.href = 'tel:' + (cfg.phoneRaw || cfg.phone || '').replace(/[^\d+]/g, '');
+    a.textContent = cfg.phone || cfg.phoneRaw;
+  }, cfg.phoneRaw || cfg.phone);
+  fill('mail', (a, v) => { a.href = 'mailto:' + v; a.textContent = v; }, cfg.email);   // в разметке mail, в настройках email
+  fill('address', (el, v) => { el.textContent = v; });
+  fill('hours', (el, v) => { el.textContent = v; });
 
   // реквизиты — в подвал и в политику конфиденциальности из одного места
-  ['legalName', 'legalShort', 'inn', 'ogrnip', 'legalAddress'].forEach(key => {
-    if (cfg[key]) set(`[data-site="${key}"]`, el => { el.textContent = cfg[key]; });
-  });
+  ['legalName', 'legalShort', 'inn', 'ogrnip', 'legalAddress']
+    .forEach(key => fill(key, (el, v) => { el.textContent = v; }));
 
   const social = {
     whatsapp: cfg.whatsapp ? 'https://wa.me/' + cfg.whatsapp.replace(/\D/g, '') : '',
