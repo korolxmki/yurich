@@ -501,7 +501,20 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
 .calc__lead{display:grid;gap:15px;grid-template-columns:1fr 1fr;align-items:end}
 .calc__lead > *{min-width:0}
 .calc__lead .btn{grid-column:1/-1}
-@media (max-width:720px){.calc__lead{grid-template-columns:1fr}}
+/* Имя и телефон держим в строке до самых узких экранов: столбиком они
+   выдавливали галочку согласия и кнопку за нижний край на экране 667 px,
+   а это ровно та потеря конверсии, из-за которой правили прокрутку. */
+@media (max-width:330px){.calc__lead{grid-template-columns:1fr}}
+
+/* На невысоких телефонах поджимаем карточку расчёта: цель — чтобы ползунок,
+   цена, поля, галочка и кнопка помещались на один экран и до отправки не
+   приходилось скроллить. */
+@media (max-width:430px){
+  .calc{padding:20px 16px;gap:16px}
+  .calc__result{padding:18px 14px}
+  .calc__lead{gap:11px}
+  .calc__hint,.calc__note{margin-top:0}
+}
 /* на совсем узких экранах кнопке разрешаем перенос — иначе она шире окна */
 .calc__note{margin:0;font-size:12.5px;color:var(--muted);text-align:center;max-width:56ch;justify-self:center}
 
@@ -549,6 +562,17 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
 .footer__bottom a{color:inherit;text-decoration:underline;text-underline-offset:2px}
 .footer__bottom a:hover{color:#fff}
 /* согласие на обработку данных: галочка и ссылка на политику */
+/* ловушка для ботов: убираем с глаз, но не display:none — часть автоматов
+   такие поля пропускает, а так оно для них выглядит обычным */
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.field--wide{grid-column:1/-1}
+.more summary{cursor:pointer;font-size:13.5px;font-weight:600;color:var(--green);
+  list-style:none;display:inline-flex;align-items:center;gap:7px;padding:2px 0}
+.more summary::-webkit-details-marker{display:none}
+.more summary::before{content:'+';font-size:16px;line-height:1}
+.more[open] summary::before{content:'–'}
+.more[open] summary{margin-bottom:10px}
+.field__opt{font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted)}
 .consent{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;
   font-size:13.5px;color:var(--muted);line-height:1.45;cursor:pointer;grid-column:1/-1}
 .consent input{width:19px;height:19px;margin:1px 0 0;accent-color:var(--green);flex:none;cursor:pointer}
@@ -918,8 +942,8 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
       <div class="calc__result">
         <span>Примерно под ключ</span>
         <b id="sumTotal">—</b>
-        <p>вместе со столешницей, фурнитурой и сборкой</p>
-        <p class="calc__after">Окончательная стоимость — после утверждения материалов и функционала.</p>
+        <p>Со столешницей, фурнитурой и сборкой. Окончательная цена — после утверждения
+          материалов и функционала.</p>
       </div>
 
       <form class="calc__lead" id="leadForm" novalidate>
@@ -930,6 +954,20 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
         <div class="field">
           <label for="leadPhone">Телефон</label>
           <input id="leadPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 ___ ___-__-__" required>
+        </div>
+        <!-- комментарий спрятан за раскрывашкой: развёрнутым он выдавливал
+             кнопку за нижний край экрана на телефоне -->
+        <details class="field--wide more">
+          <summary>Добавить комментарий</summary>
+          <div class="field">
+            <textarea id="leadComment" name="comment" rows="3" maxlength="600"
+                      placeholder="Что хотите сделать, какие сроки, что уже решили"></textarea>
+          </div>
+        </details>
+        <!-- ловушка для ботов: людям это поле не видно и не доступно с клавиатуры -->
+        <div class="hp" aria-hidden="true">
+          <label for="leadCompany">Не заполняйте это поле</label>
+          <input id="leadCompany" name="company" type="text" tabindex="-1" autocomplete="off">
         </div>
         <label class="consent">
           <input type="checkbox" id="leadConsent" name="consent" required>
@@ -1158,8 +1196,9 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
       </ul>
 
       <h2>2. Какие данные собираются</h2>
-      <p>Только то, что вы сами вписываете в форму расчёта: <b>имя</b> и <b>номер телефона</b>. Вместе с ними
-        в сообщение подставляется результат расчёта — длина кухни и примерная сумма.</p>
+      <p>Только то, что вы сами вписываете в форму расчёта: <b>имя</b>, <b>номер телефона</b> и, если захотите,
+        <b>комментарий</b>. Вместе с ними в сообщение подставляется результат расчёта — длина кухни
+        и примерная сумма.</p>
       <p>Сайт не просит паспортных данных, адреса проживания, сведений о здоровье и других особых категорий
         персональных данных. Специальные и биометрические данные не обрабатываются.</p>
 
@@ -1168,13 +1207,14 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
         Для другого эти данные не используются. Рассылок сайт не ведёт и третьим лицам данные не передаёт.</p>
 
       <h2>4. Куда они уходят</h2>
-      <p>Это важная особенность, и её стоит понимать буквально. Сайт статический: у него нет сервера, базы
-        данных и личного кабинета, он физически не может ничего сохранить. Имя и телефон, которые вы ввели,
-        подставляются в текст сообщения в Telegram, и <b>отправляете его вы сами</b> из своего аккаунта —
-        кнопка лишь открывает чат с уже готовым текстом.</p>
-      <p>То есть данные попадают в переписку между вами и мастерской в Telegram. На стороне сайта они
-        не сохраняются и никуда больше не передаются. Дальнейшее хранение переписки подчиняется правилам
-        Telegram и вашим собственным настройкам.</p>
+      <p>Заявка уходит на сервер сайта, а он сразу пересылает её в рабочий чат мастерской в Telegram.
+        Базы данных у сайта нет: сервер ничего не сохраняет, он только передаёт сообщение дальше.
+        Фактически данные живут в этом чате в Telegram и во временных технических журналах хостинга.</p>
+      <p>Привлечённые лица: <b>Vercel Inc.</b> — хостинг сайта и обработка запроса формы;
+        <b>Telegram</b> — доставка и хранение сообщения в чате. Больше данные никому не передаются и для
+        рассылок не используются.</p>
+      <p>Если сервер недоступен, заявка не теряется: открывается личный чат в Telegram с уже готовым
+        текстом, и отправляете его вы сами из своего аккаунта.</p>
 
       <h2>5. Основание обработки</h2>
       <p>Ваше согласие. Оно даётся галочкой под формой — без неё заявка не отправляется. Галочка
@@ -1197,7 +1237,7 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
 
       <h2>9. Изменения</h2>
       <p>Политика может обновляться. Действующая редакция всегда лежит по этому адресу, дата последнего
-        изменения — <time datetime="2026-10-15">15 октября 2026 года</time>.</p>
+        изменения — <time datetime="2026-10-19">19 октября 2026 года</time>.</p>
     </div>
   </div>
 </section>
@@ -1287,12 +1327,18 @@ window.SITE = {
   telegram: 'urich_promebel',          // @username или ссылка t.me/… — туда уходят заявки
   vk:       '',                        // ссылка на страницу ВКонтакте
 
+  /* Адрес, куда форма отправляет заявку. Это наша же серверная функция
+     (api/lead.js), она и стучится в Telegram — токен бота лежит в переменных
+     окружения и в браузер не попадает. Пусто — форма перейдёт на запасной
+     путь: откроет личный чат с готовым текстом. */
+  leadEndpoint: '/api/lead',
+
   /* — КУДА УХОДЯТ ЗАЯВКИ —
-     Никуда не настраивается и ничего не хранит: кнопка под расчётом открывает
-     личный чат в Telegram с уже вписанным расчётом. Имя и телефон не
-     спрашиваем — в личке и так видно, кто пишет. Поэтому сайт не собирает
-     персональных данных, и ему не нужны ни CRM-вебхук, ни обработчик форм.
-     Адрес чата берётся из telegram выше. */
+     Форма отправляет имя, телефон и комментарий на leadEndpoint, а оттуда
+     сервер пересылает их в рабочую группу в Telegram. Если адрес не задан или
+     сервер недоступен (например, открыли версию одним файлом с диска), заявка
+     не теряется: открывается личный чат из telegram выше с готовым текстом,
+     человеку остаётся нажать «Отправить». */
 };
 
 /* КОЛЛЕКЦИИ — модельный ряд кухонь.
@@ -2110,28 +2156,72 @@ function say(el, msg, isError) {
   el.textContent = msg;
 }
 
-$('#leadForm')?.addEventListener('submit', e => {
-  e.preventDefault();
-  const status = $('#leadStatus');
-  const name = $('#leadName').value.trim();
-  const phone = $('#leadPhone').value.trim();
-
-  if (name.length < 2)                      return say(status, 'Укажите, как к вам обращаться.', true);
-  if (phone.replace(/\D/g, '').length < 10) return say(status, 'Проверьте номер телефона.', true);
-  if (!$('#leadConsent').checked)           return say(status, 'Нужно согласие на обработку персональных данных.', true);
-
-  const user = telegramUser();
-  if (!user) return say(status, `Напишите или позвоните: ${cfg.phone || ''}`, true);
-
-  const text = [
+/* Заявка уходит на свой адрес (api/lead.js), а он уже пересылает её в
+   Telegram: токен бота лежит в переменных окружения сервера и в браузер не
+   попадает. Если сервера нет — открыли сборку одним файлом с диска, упала
+   сеть, не настроены переменные — заявку не теряем, а открываем личный чат
+   с готовым текстом. */
+function leadLines(d) {
+  return [
     'Здравствуйте! Заявка с сайта «Юрич Мебель».',
-    `Имя: ${name}`,
-    `Телефон: ${phone}`,
-    lastEstimate ? `Расчёт: ${lastEstimate}` : '',
+    `Имя: ${d.name}`,
+    `Телефон: ${d.phone}`,
+    d.estimate ? `Расчёт: ${d.estimate}` : '',
+    d.comment ? `Сообщение: ${d.comment}` : '',
   ].filter(Boolean).join('\n');
+}
 
-  open(`https://t.me/${user}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
+function viaTelegramChat(d, status) {
+  const user = telegramUser();
+  if (!user) {
+    say(status, `Не получилось отправить. Позвоните нам: ${cfg.phone || ''}`, true);
+    return false;
+  }
+  open(`https://t.me/${user}?text=${encodeURIComponent(leadLines(d))}`, '_blank', 'noopener');
   say(status, 'Открыли Telegram с готовым сообщением — осталось нажать «Отправить».');
+  return true;
+}
+
+$('#leadForm')?.addEventListener('submit', async e => {
+  e.preventDefault();
+  const form = e.currentTarget;
+  const status = $('#leadStatus');
+  const data = {
+    name:    $('#leadName').value.trim(),
+    phone:   $('#leadPhone').value.trim(),
+    comment: $('#leadComment')?.value.trim() || '',
+    company: $('#leadCompany')?.value || '',      // ловушка для ботов
+    estimate: lastEstimate,
+    consent: $('#leadConsent').checked,
+  };
+
+  if (data.name.length < 2)                      return say(status, 'Укажите, как к вам обращаться.', true);
+  if (data.phone.replace(/\D/g, '').length < 10) return say(status, 'Проверьте номер телефона.', true);
+  if (!data.consent)                             return say(status, 'Нужно согласие на обработку персональных данных.', true);
+
+  // с диска своего сервера нет — сразу в чат, не ждём таймаута сети
+  const local = location.protocol === 'file:';
+  if (local || !cfg.leadEndpoint) return viaTelegramChat(data, status);
+
+  const btn = form.querySelector('button[type=submit]');
+  btn.disabled = true;
+  say(status, 'Отправляем…');
+  try {
+    const res = await fetch(cfg.leadEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    const out = await res.json().catch(() => ({}));
+    if (!res.ok || !out.ok) throw new Error(out.error || res.status);
+    say(status, 'Заявка отправлена — перезвоним в течение рабочего дня.');
+    form.reset();
+  } catch (err) {
+    console.warn('Заявку не приняли, уходим в чат:', err && err.message);
+    viaTelegramChat(data, status);
+  } finally {
+    btn.disabled = false;
+  }
 });
 
 /* ——— мелочи ——— */

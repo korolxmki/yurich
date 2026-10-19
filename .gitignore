@@ -10,3 +10,7 @@ package.json
 package-lock.json
 _shot.js
 _probe.js
+
+# секреты
+.env
+.env.local

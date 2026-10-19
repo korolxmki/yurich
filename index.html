@@ -254,8 +254,8 @@
       <div class="calc__result">
         <span>Примерно под ключ</span>
         <b id="sumTotal">—</b>
-        <p>вместе со столешницей, фурнитурой и сборкой</p>
-        <p class="calc__after">Окончательная стоимость — после утверждения материалов и функционала.</p>
+        <p>Со столешницей, фурнитурой и сборкой. Окончательная цена — после утверждения
+          материалов и функционала.</p>
       </div>
 
       <form class="calc__lead" id="leadForm" novalidate>
@@ -266,6 +266,20 @@
         <div class="field">
           <label for="leadPhone">Телефон</label>
           <input id="leadPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 ___ ___-__-__" required>
+        </div>
+        <!-- комментарий спрятан за раскрывашкой: развёрнутым он выдавливал
+             кнопку за нижний край экрана на телефоне -->
+        <details class="field--wide more">
+          <summary>Добавить комментарий</summary>
+          <div class="field">
+            <textarea id="leadComment" name="comment" rows="3" maxlength="600"
+                      placeholder="Что хотите сделать, какие сроки, что уже решили"></textarea>
+          </div>
+        </details>
+        <!-- ловушка для ботов: людям это поле не видно и не доступно с клавиатуры -->
+        <div class="hp" aria-hidden="true">
+          <label for="leadCompany">Не заполняйте это поле</label>
+          <input id="leadCompany" name="company" type="text" tabindex="-1" autocomplete="off">
         </div>
         <label class="consent">
           <input type="checkbox" id="leadConsent" name="consent" required>

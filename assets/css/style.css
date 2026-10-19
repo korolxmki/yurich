@@ -427,7 +427,20 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
 .calc__lead{display:grid;gap:15px;grid-template-columns:1fr 1fr;align-items:end}
 .calc__lead > *{min-width:0}
 .calc__lead .btn{grid-column:1/-1}
-@media (max-width:720px){.calc__lead{grid-template-columns:1fr}}
+/* Имя и телефон держим в строке до самых узких экранов: столбиком они
+   выдавливали галочку согласия и кнопку за нижний край на экране 667 px,
+   а это ровно та потеря конверсии, из-за которой правили прокрутку. */
+@media (max-width:330px){.calc__lead{grid-template-columns:1fr}}
+
+/* На невысоких телефонах поджимаем карточку расчёта: цель — чтобы ползунок,
+   цена, поля, галочка и кнопка помещались на один экран и до отправки не
+   приходилось скроллить. */
+@media (max-width:430px){
+  .calc{padding:20px 16px;gap:16px}
+  .calc__result{padding:18px 14px}
+  .calc__lead{gap:11px}
+  .calc__hint,.calc__note{margin-top:0}
+}
 /* на совсем узких экранах кнопке разрешаем перенос — иначе она шире окна */
 .calc__note{margin:0;font-size:12.5px;color:var(--muted);text-align:center;max-width:56ch;justify-self:center}
 
@@ -475,6 +488,17 @@ h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.4vw,27px);lin
 .footer__bottom a{color:inherit;text-decoration:underline;text-underline-offset:2px}
 .footer__bottom a:hover{color:#fff}
 /* согласие на обработку данных: галочка и ссылка на политику */
+/* ловушка для ботов: убираем с глаз, но не display:none — часть автоматов
+   такие поля пропускает, а так оно для них выглядит обычным */
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.field--wide{grid-column:1/-1}
+.more summary{cursor:pointer;font-size:13.5px;font-weight:600;color:var(--green);
+  list-style:none;display:inline-flex;align-items:center;gap:7px;padding:2px 0}
+.more summary::-webkit-details-marker{display:none}
+.more summary::before{content:'+';font-size:16px;line-height:1}
+.more[open] summary::before{content:'–'}
+.more[open] summary{margin-bottom:10px}
+.field__opt{font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted)}
 .consent{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;
   font-size:13.5px;color:var(--muted);line-height:1.45;cursor:pointer;grid-column:1/-1}
 .consent input{width:19px;height:19px;margin:1px 0 0;accent-color:var(--green);flex:none;cursor:pointer}

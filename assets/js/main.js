@@ -506,28 +506,72 @@ function say(el, msg, isError) {
   el.textContent = msg;
 }
 
-$('#leadForm')?.addEventListener('submit', e => {
-  e.preventDefault();
-  const status = $('#leadStatus');
-  const name = $('#leadName').value.trim();
-  const phone = $('#leadPhone').value.trim();
-
-  if (name.length < 2)                      return say(status, 'Укажите, как к вам обращаться.', true);
-  if (phone.replace(/\D/g, '').length < 10) return say(status, 'Проверьте номер телефона.', true);
-  if (!$('#leadConsent').checked)           return say(status, 'Нужно согласие на обработку персональных данных.', true);
-
-  const user = telegramUser();
-  if (!user) return say(status, `Напишите или позвоните: ${cfg.phone || ''}`, true);
-
-  const text = [
+/* Заявка уходит на свой адрес (api/lead.js), а он уже пересылает её в
+   Telegram: токен бота лежит в переменных окружения сервера и в браузер не
+   попадает. Если сервера нет — открыли сборку одним файлом с диска, упала
+   сеть, не настроены переменные — заявку не теряем, а открываем личный чат
+   с готовым текстом. */
+function leadLines(d) {
+  return [
     'Здравствуйте! Заявка с сайта «Юрич Мебель».',
-    `Имя: ${name}`,
-    `Телефон: ${phone}`,
-    lastEstimate ? `Расчёт: ${lastEstimate}` : '',
+    `Имя: ${d.name}`,
+    `Телефон: ${d.phone}`,
+    d.estimate ? `Расчёт: ${d.estimate}` : '',
+    d.comment ? `Сообщение: ${d.comment}` : '',
   ].filter(Boolean).join('\n');
+}
 
-  open(`https://t.me/${user}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
+function viaTelegramChat(d, status) {
+  const user = telegramUser();
+  if (!user) {
+    say(status, `Не получилось отправить. Позвоните нам: ${cfg.phone || ''}`, true);
+    return false;
+  }
+  open(`https://t.me/${user}?text=${encodeURIComponent(leadLines(d))}`, '_blank', 'noopener');
   say(status, 'Открыли Telegram с готовым сообщением — осталось нажать «Отправить».');
+  return true;
+}
+
+$('#leadForm')?.addEventListener('submit', async e => {
+  e.preventDefault();
+  const form = e.currentTarget;
+  const status = $('#leadStatus');
+  const data = {
+    name:    $('#leadName').value.trim(),
+    phone:   $('#leadPhone').value.trim(),
+    comment: $('#leadComment')?.value.trim() || '',
+    company: $('#leadCompany')?.value || '',      // ловушка для ботов
+    estimate: lastEstimate,
+    consent: $('#leadConsent').checked,
+  };
+
+  if (data.name.length < 2)                      return say(status, 'Укажите, как к вам обращаться.', true);
+  if (data.phone.replace(/\D/g, '').length < 10) return say(status, 'Проверьте номер телефона.', true);
+  if (!data.consent)                             return say(status, 'Нужно согласие на обработку персональных данных.', true);
+
+  // с диска своего сервера нет — сразу в чат, не ждём таймаута сети
+  const local = location.protocol === 'file:';
+  if (local || !cfg.leadEndpoint) return viaTelegramChat(data, status);
+
+  const btn = form.querySelector('button[type=submit]');
+  btn.disabled = true;
+  say(status, 'Отправляем…');
+  try {
+    const res = await fetch(cfg.leadEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    const out = await res.json().catch(() => ({}));
+    if (!res.ok || !out.ok) throw new Error(out.error || res.status);
+    say(status, 'Заявка отправлена — перезвоним в течение рабочего дня.');
+    form.reset();
+  } catch (err) {
+    console.warn('Заявку не приняли, уходим в чат:', err && err.message);
+    viaTelegramChat(data, status);
+  } finally {
+    btn.disabled = false;
+  }
 });
 
 /* ——— мелочи ——— */
