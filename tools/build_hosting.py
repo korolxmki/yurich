@@ -113,5 +113,42 @@ def build():
     print(f'адрес сайта: {url}  (меняется в content/config.js → siteUrl)')
 
 
+def build_single():
+    """Вариант «три файла»: сайт одним файлом плюс robots.txt и sitemap.xml.
+
+    Внутри одного файла все разделы живут по хешу (#/blog, #/collections),
+    а отдельных страниц на сервере нет. Поэтому в карте сайта один адрес —
+    главная: ссылки на blog.html и прочее дали бы роботу 404.
+    """
+    import subprocess
+    url = site_url()
+    out = os.path.join(ROOT, 'dist', 'site-single')
+    shutil.rmtree(out, ignore_errors=True)
+    os.makedirs(out, exist_ok=True)
+
+    subprocess.run(['python3', os.path.join(ROOT, 'tools', 'build_single.py')], check=True)
+    shutil.copy2(os.path.join(ROOT, 'dist', 'odnim-failom.html'),
+                 os.path.join(out, 'index.html'))
+
+    with open(os.path.join(out, 'robots.txt'), 'w', encoding='utf-8') as fh:
+        fh.write(f'User-agent: *\nAllow: /\n\nSitemap: {url}/sitemap.xml\n')
+
+    today = date.today().isoformat()
+    with open(os.path.join(out, 'sitemap.xml'), 'w', encoding='utf-8') as fh:
+        fh.write('<?xml version="1.0" encoding="UTF-8"?>\n'
+                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+                 f'  <url>\n    <loc>{url}/</loc>\n    <lastmod>{today}</lastmod>\n'
+                 '    <changefreq>weekly</changefreq>\n    <priority>1.0</priority>\n  </url>\n'
+                 '</urlset>\n')
+
+    size = os.path.getsize(os.path.join(out, 'index.html')) / 1024 / 1024
+    print(f'dist/site-single — три файла, index.html {size:.1f} МБ')
+    print(f'адрес сайта: {url}  (меняется в content/config.js → siteUrl)')
+
+
 if __name__ == '__main__':
-    build()
+    import sys
+    if '--single' in sys.argv:
+        build_single()
+    else:
+        build()

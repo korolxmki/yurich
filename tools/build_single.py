@@ -111,7 +111,7 @@ def build():
         fix_links, (home, blog_view, post_view, coll_view, priv_view))
 
     # ——— скрипты ———
-    scripts = '\n'.join(read(f'content/{n}.js') for n in ('config', 'collections', 'works', 'posts', 'videos'))
+    scripts = '\n'.join(read(f'content/{n}.js') for n in ('config', 'collections', 'works', 'posts', 'videos', 'team'))
     scripts += '\nwindow.ASSETS = ' + json.dumps(assets) + ';\n'
     scripts += read('assets/js/post.js') + '\n' + read('assets/js/main.js')
 
@@ -178,6 +178,12 @@ def build():
     meta = '\n'.join(re.findall(
         r'<title>.*?</title>|<meta name="description"[^>]*>|<meta property="og:(?:title|description)"[^>]*>',
         index))
+    # canonical: внутри одного файла все экраны живут по хешу, то есть для
+    # поисковика это один адрес — главная
+    site = re.search(r"siteUrl:\s*'([^']+)'", read('content/config.js'))
+    if site:
+        base = site.group(1).rstrip('/')
+        meta += f'\n<link rel="canonical" href="{base}/">\n<meta property="og:url" content="{base}/">'
 
     page = f'''<!doctype html>
 <html lang="ru">
