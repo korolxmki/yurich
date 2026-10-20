@@ -14,3 +14,9 @@ _probe.js
 # секреты
 .env
 .env.local
+
+secrets.php
+
+dist/site/
+
+dist/urichmebel-site.zip

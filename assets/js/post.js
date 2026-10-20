@@ -21,6 +21,17 @@ if (!post) {
   document.querySelector('meta[property="og:title"]')?.setAttribute('content', post.title);
   document.querySelector('meta[property="og:description"]')?.setAttribute('content', post.excerpt);
 
+  /* canonical у статьи зависит от ?slug=, поэтому ставим его здесь, а не при
+     сборке. Без него поисковик считает post.html со всеми слагами одной
+     страницей — в индекс попадает только одна статья из четырёх. */
+  const base = (window.SITE && window.SITE.siteUrl || '').replace(/\/$/, '');
+  if (base && !window.ASSETS) {
+    let link = document.querySelector('link[rel=canonical]');
+    if (!link) { link = document.createElement('link'); link.rel = 'canonical'; document.head.appendChild(link); }
+    link.href = `${base}/post.html?slug=${encodeURIComponent(slug)}`;
+    document.querySelector('meta[property="og:url"]')?.setAttribute('content', link.href);
+  }
+
   $('#crumb').textContent = post.title;
   $('#articleHead').innerHTML = `
     <div class="post-card__meta" style="margin-bottom:16px">

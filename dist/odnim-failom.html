@@ -1327,11 +1327,14 @@ window.SITE = {
   telegram: 'urich_promebel',          // @username или ссылка t.me/… — туда уходят заявки
   vk:       '',                        // ссылка на страницу ВКонтакте
 
-  /* Адрес, куда форма отправляет заявку. Это наша же серверная функция
-     (api/lead.js), она и стучится в Telegram — токен бота лежит в переменных
-     окружения и в браузер не попадает. Пусто — форма перейдёт на запасной
-     путь: откроет личный чат с готовым текстом. */
-  leadEndpoint: '/api/lead',
+  siteUrl: 'https://urichmebel.ru',    // без косой черты в конце; отсюда берутся
+                                       // карта сайта, robots.txt и canonical
+
+  /* Куда форма отправляет заявку. На обычном хостинге это lead.php рядом
+     с index.html, на Vercel — /api/lead. Адрес относительный, поэтому сайт
+     работает и в подпапке. Пусто — останется только запасной путь: откроется
+     личный чат в Telegram с готовым текстом. */
+  leadEndpoint: 'lead.php',
 
   /* — КУДА УХОДЯТ ЗАЯВКИ —
      Форма отправляет имя, телефон и комментарий на leadEndpoint, а оттуда
@@ -1614,6 +1617,17 @@ if (!post) {
   document.querySelector('meta[name=description]')?.setAttribute('content', post.excerpt);
   document.querySelector('meta[property="og:title"]')?.setAttribute('content', post.title);
   document.querySelector('meta[property="og:description"]')?.setAttribute('content', post.excerpt);
+
+  /* canonical у статьи зависит от ?slug=, поэтому ставим его здесь, а не при
+     сборке. Без него поисковик считает post.html со всеми слагами одной
+     страницей — в индекс попадает только одна статья из четырёх. */
+  const base = (window.SITE && window.SITE.siteUrl || '').replace(/\/$/, '');
+  if (base && !window.ASSETS) {
+    let link = document.querySelector('link[rel=canonical]');
+    if (!link) { link = document.createElement('link'); link.rel = 'canonical'; document.head.appendChild(link); }
+    link.href = `${base}/post.html?slug=${encodeURIComponent(slug)}`;
+    document.querySelector('meta[property="og:url"]')?.setAttribute('content', link.href);
+  }
 
   $('#crumb').textContent = post.title;
   $('#articleHead').innerHTML = `
